@@ -32,7 +32,7 @@ void List::append_last(int data) {
   if (size==1) header = tail;
 }
 void List::head_to_tail() {
-  if (size==1) return;
+  if (size<=1) return;
   Node* tmp = header;
   header = header->next;
   tmp->next = NULL;
@@ -40,7 +40,7 @@ void List::head_to_tail() {
   tail = tmp;
 }
 void List::tail_to_head() {
-  if (size==1) return;
+  if (size<=1) return;
   Node* tmp;
   Node* p = header;
   while (p->next!=NULL && p->next->next!=NULL) {
