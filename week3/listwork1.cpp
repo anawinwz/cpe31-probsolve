@@ -21,7 +21,7 @@ void List::insert_front(int data) {
   size++;
 }
 void List::delete_at(int k) {
-  if(size < k) return;
+  if(k > size) return;
   //cout << "delete_at" << k << ","<<size<<endl;
   Node* p = header;
   Node* tmp;
@@ -32,6 +32,9 @@ void List::delete_at(int k) {
   if (size == 1) {
     tmp = p;
     header = NULL;
+  } else if (k==1) {
+    tmp = p;
+    header = p->next;
   } else {
     tmp = p->next;
     p->next = tmp->next;
