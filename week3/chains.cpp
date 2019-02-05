@@ -15,7 +15,9 @@ void tail_point(Node* header, Node* target) {
     p = p->next;
   }
   p->next = target;
+  p->isEnd = 0;
   target->prev = p;
+  target->isEnd = 0;
 }
 /*
 int nodeSize[300000];
@@ -86,7 +88,7 @@ int main() {
         break;
       case 'C':
         cin >> at;
-        cout << "try to combine " <<at<<endl;
+       // cout << "try to combine " <<at<<endl;
 
         tmpp = curr;
         curr = curr->prev;
@@ -94,15 +96,17 @@ int main() {
         
         tmpp->prev = NULL;
         tmpp->isEnd = 1;
-        
+
         if (node[at]->next!=NULL || node[at]->prev==NULL) {
-          cout << "normal connect!" <<endl;
+         // cout << "normal connect!" <<endl;
         } else {
-          cout << "reverse before connect!" <<endl;
+          //cout << "reverse before connect!" <<endl;
           //TODO: REVERSE before merge
           reverse_line(node[at]);
-          print_list(node[at]);
+          //print_list(node[at]);
         }
+        node[at]->prev = curr;
+        node[at]->isEnd = 0;
         tail_point(node[at], curr->next);
         curr->next = node[at];
         curr = curr->next;
