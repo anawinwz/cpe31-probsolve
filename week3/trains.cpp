@@ -7,10 +7,9 @@ struct Node {
     : data(data), next(next) {}
 };
 class List {
-  private:
-    Node* tail = NULL;
   public:
     Node* header = NULL;
+    Node* tail = NULL;
     int size = 0;
     void connect(List* next);
     void append_last(int data);
@@ -24,10 +23,11 @@ void List::reset_train() {
 }
 void List::connect(List* next) {
   if (tail!=NULL) {
-    Node* newNode = next->header;
-    tail->next=newNode;
-    size+=next->size;
-    delete next->header;
+    //Node* newNode = next->header;
+    tail->next = next->header;
+    size += next->size;
+    //delete next->header;
+    tail = next->tail;
     next->reset_train();
   }
 }
