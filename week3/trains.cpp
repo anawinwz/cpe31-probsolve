@@ -22,6 +22,8 @@ void List::reset_train() {
   tail = NULL;
 }
 void List::connect(List* next) {
+  if (next->size==0) return;
+  
   if (tail!=NULL) {
     //Node* newNode = next->header;
     tail->next = next->header;
