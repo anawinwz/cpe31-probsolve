@@ -1,5 +1,4 @@
 #include<iostream>
-#include<map>
 using namespace std;
 int findAns(int n) {
   //cout << "findAns(" <<n << ")"<<endl;
