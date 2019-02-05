@@ -85,14 +85,16 @@ int main() {
       case 'C':
         cin >> at;
        // cout << "try to combine " <<at<<endl;
-        if(curr->next!=NULL) curr=curr->next;
+        if(curr->next!=NULL) {
+          curr=curr->next;
 
-        tmpp = curr;
-        curr = curr->prev;
-        curr->isEnd = 1;
-        
-        tmpp->prev = NULL;
-        tmpp->isEnd = 1;
+          tmpp = curr;
+          curr = curr->prev;
+          curr->isEnd = 1;
+          
+          tmpp->prev = NULL;
+          tmpp->isEnd = 1;
+        }
 
         if (node[at]->next!=NULL || node[at]->prev==NULL) {
          // cout << "normal connect!" <<endl;
@@ -109,6 +111,9 @@ int main() {
         break;
     }
     cout << curr->data << endl;
+    /*cout << "--------" << endl;
+    print_list(node[1]);
+    cout << endl << "--------" << endl;*/
   }
   return 0;
 }
