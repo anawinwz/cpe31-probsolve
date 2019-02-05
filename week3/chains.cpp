@@ -14,19 +14,12 @@ void tail_point(Node* header, Node* target) {
   while (p->next!=NULL) {
     p = p->next;
   }
-  p->next = target;
+  //cout << "found last " <<p->data<<endl;
+  p->next = NULL;
   p->isEnd = 0;
-  target->prev = p;
-  target->isEnd = 0;
+  target->prev = NULL;
+  target->isEnd = 1;
 }
-/*
-int nodeSize[300000];
-int tour(Node* header) {
-  if (nodeSize[header->data-1]) return nodeSize[header->data-1];
-  if (header->next==NULL) nodeSize[header->data-1] = 1;
-  else nodeSize[header->data-1] = 1+tour(header->next);
-  return nodeSize[header->data-1];
-}*/
 void print_list(Node* header) {
   Node* p = header;
   while (p!=NULL) {
@@ -79,6 +72,9 @@ int main() {
   char cmd; int at;
   for(int nn=0;nn<n;nn++){
     cin >> cmd;
+    /*cout << "--------" << endl;
+    print_list(node[1]);
+    cout << endl << "--------" << endl;*/
     switch(cmd) {
       case 'F':
         if(curr->next!=NULL) curr=curr->next;
@@ -89,6 +85,7 @@ int main() {
       case 'C':
         cin >> at;
        // cout << "try to combine " <<at<<endl;
+        if(curr->next!=NULL) curr=curr->next;
 
         tmpp = curr;
         curr = curr->prev;
@@ -101,7 +98,6 @@ int main() {
          // cout << "normal connect!" <<endl;
         } else {
           //cout << "reverse before connect!" <<endl;
-          //TODO: REVERSE before merge
           reverse_line(node[at]);
           //print_list(node[at]);
         }
