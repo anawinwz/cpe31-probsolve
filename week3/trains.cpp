@@ -49,9 +49,10 @@ int main() {
   List list[100000];
   int m;
   cin >> m;
-  char cmd; int x, y;
+  char cmd; int x, y, maxx = 0;
   for (int i=0;i<m;i++) {
     cin >> cmd >> x >> y;
+    if (y-1 > maxx) maxx = y-1;
     switch(cmd){
       case 'N':list[y-1].append_last(x);break;
       case 'M':list[y-1].connect(&list[x-1]);break;
@@ -60,7 +61,7 @@ int main() {
     list[y-1].print_list();
     cout << "-------" << endl;*/
   }
-  for(int i=0;i<100000;i++) {
+  for(int i=0;i<=maxx;i++) {
     //cout << i << endl;
     list[i].print_list();
   }
