@@ -13,12 +13,14 @@ void tail_point(Node* header, Node* target) {
   Node* p = header;
   while (p->next!=NULL) {
     p = p->next;
-  }
-  //cout << "found last " <<p->data<<endl;
+  };
   p->next = NULL;
   p->isEnd = 0;
-  target->prev = NULL;
-  target->isEnd = 1;
+
+  if(target!=NULL) {
+    target->prev = NULL;
+    target->isEnd = 1;
+  }
 }
 void print_list(Node* header) {
   Node* p = header;
@@ -33,7 +35,6 @@ void reverse_line(Node* header) {
   Node* tmp;
   Node* p = header;
   while(p!=NULL) {
-    //prev to next
     tmp = p->next;
     p->next = p->prev;
     p->prev = tmp;
@@ -41,7 +42,7 @@ void reverse_line(Node* header) {
   }
 }
 int main() {
-  Node* node[100001];
+  Node* node[100002];
   for (int i=1;i<=100000;i++) node[i] = new Node(i);
   for (int i=1;i<=100000;i++) {
     if (i>1) node[i]->prev = node[i-1];
@@ -61,7 +62,6 @@ int main() {
       node[lastI+1]->isEnd = 1;
     }
     cin >> tmp;
-    //cout << "range ("<<lastI+1<<","<<lastI+tmp<<")"<<endl;
     node[lastI+tmp]->isEnd = 1;
     node[lastI+tmp]->next = NULL;
     lastI+=tmp;
