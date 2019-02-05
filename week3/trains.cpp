@@ -25,11 +25,13 @@ void List::connect(List* next) {
   if (tail!=NULL) {
     //Node* newNode = next->header;
     tail->next = next->header;
-    size += next->size;
-    //delete next->header;
-    tail = next->tail;
-    next->reset_train();
+  } else {
+    header = next->header;
   }
+  size += next->size;
+  //delete next->header;
+  tail = next->tail;
+  next->reset_train();
 }
 void List::append_last(int data) {
   Node* newNode = new Node(data, NULL);
