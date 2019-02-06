@@ -5,6 +5,9 @@ struct Node {
   int isEnd = 0;
   Node* prev = NULL;
   Node* next = NULL;
+  Node* tail = NULL;
+  Node* head = NULL;
+  int isRev = 0;
   Node(int data)
     : data(data) {}
 };
@@ -66,63 +69,70 @@ int main() {
 
   int l, n, lastI=0, tmp;
   cin >> l >> n;
-  node[1]->isEnd = 1;
-  node[1]->prev = NULL;
   for(int ll=0;ll<l;ll++) {
+    cin >> tmp;
     if (lastI > 0){
       node[lastI]->next = NULL;
       node[lastI]->isEnd = 1;
-
-      node[lastI+1]->prev = NULL;
-      node[lastI+1]->isEnd = 1;
     }
-    cin >> tmp;
-    node[lastI+tmp]->isEnd = 1;
-    node[lastI+tmp]->next = NULL;
+    
+    if(lastI+1 <= 100000) {
+      node[lastI+1]->prev = NULL;
+
+      node[lastI+1]->isEnd = 1;
+      
+      node[lastI+1]->head = (lastI+1<=100000) ? node[lastI+1]:NULL;
+      node[lastI+1]->tail = (lastI+tmp<=100000) ? node[lastI+tmp]:NULL;
+    }
+    if(lastI+tmp <= 100000) {
+      node[lastI+tmp]->next = NULL;
+
+      node[lastI+tmp]->isEnd = 1;
+      
+      node[lastI+tmp]->head = (lastI+1<=100000) ? node[lastI+1]:NULL;
+      node[lastI+tmp]->tail = (lastI+tmp<=100000) ? node[lastI+tmp]:NULL;
+    }
     lastI+=tmp;
   }
 
   Node* curr = node[1];
   Node* tmpp;
+  Node* lastHead;
   char cmd; int at, mode;
   for(int nn=0;nn<n;nn++){
     cin >> cmd;
+    if (curr->tail!=NULL && curr->tail!=lastHead->tail) lastHead = curr;
     /*cout << "--------" << endl;
     print_list(node[1]);
     cout << endl << "--------" << endl;*/
     switch(cmd) {
       case 'F':
-        if(curr->next!=NULL) curr=curr->next;
+        if(lastHead->isRev==0 && curr->next!=NULL) curr=curr->next;
+        else if(curr->prev!=NULL) curr = curr->prev;
         break;
       case 'B':
-        if(curr->prev!=NULL) curr=curr->prev;
+        if(lastHead->isRev==0 && curr->prev!=NULL) curr=curr->prev;
+        else if(curr->next!=NULL) curr = curr->next;
         break;
       case 'C':
         cin >> at;
        // cout << "try to combine " <<at<<endl;
-        if(curr->next!=NULL) {
-          curr=curr->next;
+       
+        if((lastHead->isRev==0 && curr->next!=NULL) || (lastHead->isRev==1 && curr->prev!=NULL)) {
+          curr = (lastHead->isRev==0) ? curr->next : curr->prev;
 
           tmpp = curr;
-          curr = curr->prev;
+          curr = (lastHead->isRev==0) ? curr->prev : curr->next;
           curr->isEnd = 1;
           
-          tmpp->prev = NULL;
+          lastHead->tail = curr;
+
+          if (lastHead->isRev==0) tmpp->prev = NULL;
+          else tmpp->next = NULL;
           tmpp->isEnd = 1;
         }
 
-        if (node[at]->next!=NULL || node[at]->prev==NULL) {
-         // cout << "normal connect!" <<endl;
-          mode = 0;
-        } else {
-          //cout << "reverse before connect!" <<endl;
-          //reverse_line(node[at]);
-          mode = 1;
-          //print_list(node[at]);
-        }
-        
-        //print_list(node[1]);
-        tail_point(mode, node[at], curr->next);
+        if()
         node[at]->prev = curr;
         node[at]->isEnd = 0;
         curr->next = node[at];
