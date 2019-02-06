@@ -9,12 +9,25 @@ struct Node {
     : data(data) {}
 };
 
-void tail_point(Node* header, Node* target) {
+void tail_point(int mode, Node* header, Node* target) {
   Node* p = header;
-  while (p->next!=NULL) {
-    p = p->next;
-  };
-  p->next = NULL;
+  
+  if (mode==0) {
+    while (p->next!=NULL) {
+      p = p->next;
+    };
+    p->next = NULL;
+  } else {
+    Node* tmp;
+    while(true) {
+      tmp = p->next;
+      p->next = p->prev;
+      p->prev = tmp;
+      if(p->next != NULL) p = p->next;
+      else break;
+    }
+    p->next = NULL;
+  }
   p->isEnd = 0;
 
   if(target!=NULL) {
@@ -31,6 +44,7 @@ void print_list(Node* header) {
     p = p->next;
   }
 }
+/*
 void reverse_line(Node* header) {
   Node* tmp;
   Node* p = header;
@@ -41,6 +55,7 @@ void reverse_line(Node* header) {
     p = p->next;
   }
 }
+*/
 int main() {
   Node* node[100002];
   for (int i=1;i<=100000;i++) node[i] = new Node(i);
@@ -69,7 +84,7 @@ int main() {
 
   Node* curr = node[1];
   Node* tmpp;
-  char cmd; int at;
+  char cmd; int at, mode;
   for(int nn=0;nn<n;nn++){
     cin >> cmd;
     /*cout << "--------" << endl;
@@ -98,14 +113,18 @@ int main() {
 
         if (node[at]->next!=NULL || node[at]->prev==NULL) {
          // cout << "normal connect!" <<endl;
+          mode = 0;
         } else {
           //cout << "reverse before connect!" <<endl;
-          reverse_line(node[at]);
+          //reverse_line(node[at]);
+          mode = 1;
           //print_list(node[at]);
         }
+        
+        //print_list(node[1]);
+        tail_point(mode, node[at], curr->next);
         node[at]->prev = curr;
         node[at]->isEnd = 0;
-        tail_point(node[at], curr->next);
         curr->next = node[at];
         curr = curr->next;
         break;
