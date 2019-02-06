@@ -59,6 +59,19 @@ void reverse_line(Node* header) {
   }
 }
 */
+void print_node(Node* node) {
+  cout << "++++++++++++++++" <<endl;
+  cout << "data : " <<node->data<<endl<<endl;
+  
+  cout << "isEnd : "<<node->isEnd<<", ";
+  cout << "isRev : "<<node->isRev<<endl<<endl;
+  cout << "prev : " <<((node->prev!=NULL)?node->prev->data:0)<<", ";
+  cout << "next : " <<((node->next!=NULL)?node->next->data:0)<<endl;
+  cout << "head : " <<((node->head!=NULL)?node->head->data:0)<<", ";
+  cout << "tail : " <<((node->tail!=NULL)?node->tail->data:0)<<endl;
+  cout << "++++++++++++++++" <<endl;
+
+}
 int main() {
   Node* node[100002];
   for (int i=1;i<=100000;i++) node[i] = new Node(i);
@@ -97,49 +110,89 @@ int main() {
 
   Node* curr = node[1];
   Node* tmpp;
-  Node* lastHead;
+  Node* lastHead = NULL;
   char cmd; int at, mode;
   for(int nn=0;nn<n;nn++){
     cin >> cmd;
-    if (curr->tail!=NULL && curr->tail!=lastHead->tail) lastHead = curr;
-    /*cout << "--------" << endl;
-    print_list(node[1]);
-    cout << endl << "--------" << endl;*/
+
+    cout << "--------------" <<endl;
+    if(lastHead!=NULL) cout << "prev lastHead: " <<lastHead->data<<endl;
+    if (lastHead == NULL || curr->tail!=NULL && curr->tail!=lastHead->tail) lastHead = curr;
+    cout << "now lastHead: " <<lastHead->data<<endl;
+    cout << "--------------" <<endl;
+
     switch(cmd) {
       case 'F':
         if(lastHead->isRev==0 && curr->next!=NULL) curr=curr->next;
-        else if(curr->prev!=NULL) curr = curr->prev;
+        else if(lastHead->isRev==1 && curr->prev!=NULL) curr = curr->prev;
         break;
       case 'B':
         if(lastHead->isRev==0 && curr->prev!=NULL) curr=curr->prev;
-        else if(curr->next!=NULL) curr = curr->next;
+        else if(lastHead->isRev==1 && curr->next!=NULL) curr = curr->next;
         break;
       case 'C':
         cin >> at;
        // cout << "try to combine " <<at<<endl;
-       
+        print_node(curr);
         if((lastHead->isRev==0 && curr->next!=NULL) || (lastHead->isRev==1 && curr->prev!=NULL)) {
-          curr = (lastHead->isRev==0) ? curr->next : curr->prev;
-
-          tmpp = curr;
-          curr = (lastHead->isRev==0) ? curr->prev : curr->next;
-          curr->isEnd = 1;
           
-          lastHead->tail = curr;
+          curr = (lastHead->isRev==0) ? curr->next : curr->prev;
+          cout << "\tGo to "<<curr->data<<endl;
+          
+          tmpp = (lastHead->isRev==0) ? curr->prev : curr->next;
+
+          if(curr->head==NULL || curr->data > curr->head->data) {
+            curr->prev = NULL;
+            curr->tail = curr;
+            curr->head = curr;
+          }
+          print_node(curr);
+
+          
+          curr = tmpp;
+          cout << "\tGo to "<<curr->data<<endl;
+          
+          if (lastHead->isRev==0) lastHead->tail = curr;
+          else lastHead->head = curr;
 
           if (lastHead->isRev==0) tmpp->prev = NULL;
           else tmpp->next = NULL;
           tmpp->isEnd = 1;
         }
 
-        if()
-        node[at]->prev = curr;
+
+        if(node[at]->data > node[at]->head->data) {
+          //This is reverse node.
+          node[at]->isRev = 1;
+
+          node[at]->next = curr;
+          if(node[at]->tail!=NULL) {
+            node[at]->tail->isEnd = 0;
+            node[at]->tail->prev = (lastHead->isRev==0) ? curr->next : curr->prev;
+          }
+        } else {
+          node[at]->prev = curr;
+          if(node[at]->tail!=NULL) {
+            node[at]->tail->isEnd = 0;
+            node[at]->tail->next = (lastHead->isRev==0) ? curr->next : curr->prev;
+          }
+        }
         node[at]->isEnd = 0;
-        curr->next = node[at];
-        curr = curr->next;
+        
+        tmpp = (lastHead->isRev==0) ? curr->next : curr->prev;
+        if(tmpp!=NULL) {
+          tmpp->prev = NULL;
+          tmpp->isEnd = 1;
+        }
+
+        curr->isRev = lastHead->isRev;
+        if(curr->isRev==0) curr->next = node[at];
+        else curr->prev = node[at];
+        print_node(curr);
+        curr = node[at];
         break;
     }
-    cout << curr->data << endl;
+    cout << "FINAL CURR: " << curr->data << endl;
     /*cout << "--------" << endl;
     print_list(node[1]);
     cout << endl << "--------" << endl;*/
