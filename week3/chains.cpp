@@ -113,6 +113,7 @@ int main() {
     print_list(node[1]);
     cout << endl << "--------" << endl;*/
     updateLast(curr, lastRev, lastHead, lastTail);
+    if (curr->head==0) curr->head = lastHead;
     switch(cmd) {
       case 'F':
         if(lastRev == 0 && curr->next!=NULL) curr=curr->next;
