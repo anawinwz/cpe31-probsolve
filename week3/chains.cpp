@@ -81,9 +81,12 @@ int main() {
   }
 
   int l, n, lastI=0, tmp;
-  scanf("%d %d",&l,&n);
+  //scanf("%d %d",&l,&n);
+  scan_integer(l);
+  scan_integer(n);
   for(int ll=0;ll<l;ll++) {
-    scanf("%d",&tmp);   
+    //scanf("%d",&tmp);
+    scan_integer(tmp); 
 
     node[lastI+1]->prev = NULL;
     node[lastI+1]->head = lastI+1;
@@ -105,7 +108,6 @@ int main() {
   int lastTail = curr->tail;
   char cmd; int at, mode;
   for(int nn=0;nn<n;nn++){
-    //cin >> cmd;
     scanf(" %c",&cmd);
     /*cout << "--------" << endl;
     print_list(node[1]);
@@ -121,7 +123,8 @@ int main() {
         else if(lastRev == 1 && curr->next!=NULL) curr=curr->next;
         break;
       case 'C':
-        scanf("%d",&at);
+        //scanf("%d",&at);
+        scan_integer(at);
        // cout << "try to combine " <<at<<endl;
         if(lastRev == 0 && curr->next!=NULL) {
 
