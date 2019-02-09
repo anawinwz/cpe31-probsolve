@@ -65,11 +65,26 @@ void reverse_line(Node* header) {
   }
 }
 */
-void updateLast(Node*& curr, int*& lastRev, int*& lastHead, int*& lastTail) {
-  
+Node* node[100002];
+void updateLast(Node*& curr, int& lastRev, int& lastHead, int& lastTail) {
+  if(((curr->head!=0&&curr==node[curr->head])||(curr->tail!=0&&curr==node[curr->tail])) && curr->isRev!=lastRev) {
+    cout <<"lastRev is changed to " << curr->isRev << endl;
+    lastRev = curr->isRev;
+  }
+  if(curr->head!=0) {
+    if(curr->head!=lastHead) {
+      lastHead = curr->head;
+      cout <<"lastHead is changed to "<<lastHead<<endl; 
+    }
+  }
+  if(curr->tail!=0) {
+    if(curr->tail!=lastTail) {
+      lastTail = curr->tail;
+      cout <<"lastTail is changed to "<<lastTail<<endl; 
+    }
+  }
 }
 int main() {
-  Node* node[100002];
   for (int i=1;i<=100000;i++) node[i] = new Node(i);
   for (int i=1;i<=100000;i++) {
     node[i]->head = 0;
@@ -109,22 +124,7 @@ int main() {
     /*cout << "--------" << endl;
     print_list(node[1]);
     cout << endl << "--------" << endl;*/
-    if(((curr->head!=0&&curr==node[curr->head])||(curr->tail!=0&&curr==node[curr->tail])) && curr->isRev!=lastRev) {
-      cout <<"lastRev is changed to " << curr->isRev << endl;
-      lastRev = curr->isRev;
-    }
-    if(curr->head!=0) {
-      if(curr->head!=lastHead) {
-        lastHead = curr->head;
-        cout <<"lastHead is changed to "<<lastHead<<endl; 
-      }
-    }
-    if(curr->tail!=0) {
-      if(curr->tail!=lastTail) {
-        lastTail = curr->tail;
-        cout <<"lastTail is changed to "<<lastTail<<endl; 
-      }
-    }
+    updateLast(curr, lastRev, lastHead, lastTail);
     switch(cmd) {
       case 'F':
         if(lastRev == 0 && curr->next!=NULL) curr=curr->next;
@@ -141,14 +141,16 @@ int main() {
 
           curr = curr->next;
           tmpp = curr;
-          curr = curr->prev;
+          if(curr->isRev==0) curr = curr->prev;
+          else curr = curr->next;
+          updateLast(curr, lastRev, lastHead, lastTail);
           cout << "curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
 
       
           //curr- Last node before the unchained
           //tmpp - Unchained head node  
-          curr->tail = curr->data;
           node[curr->tail]->head = tmpp->data;
+          curr->tail = curr->data;
           if(lastRev==0) {
             tmpp->prev = NULL;
           } else {
@@ -165,6 +167,7 @@ int main() {
           curr = curr->prev;
           tmpp = curr;
           curr = curr->next;
+          updateLast(curr, lastRev, lastHead, lastTail);
           cout << "curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
 
           //Last node before the unchained
@@ -213,7 +216,7 @@ int main() {
             node[at]->tail = tmp;*/
             node[at]->isRev = 0;
             cout << "NORMAL!" << endl;
-            print_list(node[at]);
+            //print_list(node[at]);
             cout << endl;
           //}
           node[at]->prev = curr;
@@ -232,7 +235,7 @@ int main() {
             node[at]->tail = tmp;
             node[at]->isRev = (node[at]->isRev==1)?0:1;
             cout << "Swapping head and tail to REVERSE!" << endl;
-            print_list(node[at]);
+            //print_list(node[at]);
             cout << endl;
           //}
           if(node[at]->isRev==1) { 
@@ -254,6 +257,7 @@ int main() {
 
         if(lastRev==0) curr = curr->next;
         else if(lastRev==1) curr = curr->prev;
+        updateLast(curr, lastRev, lastHead, lastTail);
         break;
     }
     //cout << "--------" << endl;
@@ -261,7 +265,7 @@ int main() {
     //cout << endl << "--------" << endl;
   
     //cout << ""<< curr->data << endl;
-    printf("%d\n",curr->data);
+    printf("\t%d\n",curr->data);
   }
   return 0;
 }
