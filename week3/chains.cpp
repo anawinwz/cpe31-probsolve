@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<iostream>
 using namespace std;
-
 #define gc getchar_unlocked
 void scan_integer( int &x )
 {
@@ -139,8 +138,10 @@ int main() {
       
           //curr- Last node before the unchained
           //tmpp - Unchained head node  
-          node[curr->tail]->head = tmpp->data;
+          node[lastTail]->head = tmpp->data;
+          curr->head = lastHead;
           curr->tail = curr->data;
+          node[lastHead]->tail = curr->data;
           if(lastRev==0) {
             tmpp->prev = NULL;
           } else {
