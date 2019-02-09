@@ -1,3 +1,4 @@
+#include<stdio.h>
 #include<iostream>
 using namespace std;
 struct Node {
@@ -72,9 +73,9 @@ int main() {
   }
 
   int l, n, lastI=0, tmp;
-  cin >> l >> n;
+  scanf("%d %d",&l,&n);
   for(int ll=0;ll<l;ll++) {
-    cin >> tmp;    
+    scanf("%d",&tmp);   
 
     node[lastI+1]->prev = NULL;
     node[lastI+1]->head = lastI+1;
@@ -96,7 +97,8 @@ int main() {
   int lastTail = curr->tail;
   char cmd; int at, mode;
   for(int nn=0;nn<n;nn++){
-    cin >> cmd;
+    //cin >> cmd;
+    scanf(" %c",&cmd);
     /*cout << "--------" << endl;
     print_list(node[1]);
     cout << endl << "--------" << endl;*/
@@ -126,7 +128,7 @@ int main() {
         else if(lastRev == 1 && curr->next!=NULL) curr=curr->next;
         break;
       case 'C':
-        cin >> at;
+        scanf("%d",&at);
        // cout << "try to combine " <<at<<endl;
         if(lastRev == 0 && curr->next!=NULL) {
 
@@ -221,7 +223,8 @@ int main() {
     //print_list(node[1]);
     //cout << endl << "--------" << endl;
   
-    cout << ""<< curr->data << endl;
+    //cout << ""<< curr->data << endl;
+    printf("%d\n",curr->data);
   }
   return 0;
 }
