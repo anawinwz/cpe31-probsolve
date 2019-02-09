@@ -1,6 +1,25 @@
 #include<stdio.h>
 #include<iostream>
 using namespace std;
+
+#define gc getchar_unlocked
+void scan_integer( int &x )
+{
+    register int c = gc();
+    x = 0;
+    int neg = 0;
+    for( ; ((c<48 || c>57) && c != '-'); c = gc() );
+    if( c=='-' ) {
+        neg=1;
+        c=gc();
+    }
+    for( ;c>47 && c<58; c = gc() ) {
+        x = (x << 1) + (x << 3) + c - 48;
+    }
+    if( neg )
+        x=-x;
+} 
+
 struct Node {
   int data;
   int isRev;
@@ -11,33 +30,6 @@ struct Node {
   Node(int data)
     : data(data) {}
 };
-/*
-void tail_point(int mode, Node* header, Node* target) {
-  Node* p = header;
-  
-  if (mode==0) {
-    while (p->next!=NULL) {
-      p = p->next;
-    };
-    p->next = NULL;
-  } else {
-    Node* tmp;
-    while(true) {
-      tmp = p->next;
-      p->next = p->prev;
-      p->prev = tmp;
-      if(p->next != NULL) p = p->next;
-      else break;
-    }
-    p->next = NULL;
-  }
-  p->isEnd = 0;
-
-  if(target!=NULL) {
-    target->prev = NULL;
-    target->isEnd = 1;
-  }
-}*/
 void print_list(Node* header) {
   Node* p = header;
   //int isRev = (p->isRev==1 || (p->next==NULL && p->prev!=NULL)) ? 1 : 0;
@@ -53,18 +45,6 @@ void print_list(Node* header) {
     else if(isRev==1) p = p->prev;
   }
 }
-/*
-void reverse_line(Node* header) {
-  Node* tmp;
-  Node* p = header;
-  while(p!=NULL) {
-    tmp = p->next;
-    p->next = p->prev;
-    p->prev = tmp;
-    p = p->next;
-  }
-}
-*/
 Node* node[100002];
 void updateLast(Node*& curr, int& lastRev, int& lastHead, int& lastTail) {
   if(((curr->head!=0&&curr==node[curr->head])||(curr->tail!=0&&curr==node[curr->tail])) && curr->isRev!=lastRev) {
