@@ -236,15 +236,17 @@ int main() {
             #endif
           //}
           node[at]->prev = curr;
-          node[node[at]->tail]->next = NULL;
+          if(node[at]->tail!=0) node[node[at]->tail]->next = NULL;
 
         } else {
           
           //if(node[at]->isRev==0) {
             //node[at] becomes head
-            node[node[at]->head]->tail = node[at]->head;
-            node[node[at]->head]->head = at;
-            node[node[at]->head]->isRev = (node[at]->isRev==1)?0:1;
+            if(node[at]->head!=0) {
+              node[node[at]->head]->tail = node[at]->head;
+              node[node[at]->head]->head = at;
+              node[node[at]->head]->isRev = (node[at]->isRev==1)?0:1;
+            }
 
             tmp = node[at]->head;
             node[at]->head = at;
