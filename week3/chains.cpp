@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<iostream>
 using namespace std;
-#define gc getchar_unlocked
+//#define debug TRUE
+#define gc getchar
 void scan_integer( int &x )
 {
     register int c = gc();
@@ -129,19 +130,10 @@ int main() {
 
           curr = curr->next;
           tmpp = curr;
+          node[lastHead]->tail = curr->data;
           if(curr->isRev==0) curr = curr->prev;
           else curr = curr->next;
-          updateLast(curr, lastRev, lastHead, lastTail);
-          #ifdef debug
-          cout << "curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
-          #endif
-      
-          //curr- Last node before the unchained
-          //tmpp - Unchained head node  
-          node[lastTail]->head = tmpp->data;
-          curr->head = lastHead;
-          curr->tail = curr->data;
-          node[lastHead]->tail = curr->data;
+
           if(lastRev==0) {
             tmpp->prev = NULL;
           } else {
@@ -153,14 +145,40 @@ int main() {
           node[tmpp->tail]->head = tmpp->data;
           node[tmpp->tail]->tail = lastTail;
           node[tmpp->tail]->isRev = lastRev;
+
+          updateLast(curr, lastRev, lastHead, lastTail);
+          #ifdef debug
+          cout << "(lastRev:0) curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
+          #endif
+      
+          //curr- Last node before the unchained
+          //tmpp - Unchained head node
+          node[lastTail]->head = tmpp->data;  
+          
+          curr->head = lastHead;
+          curr->tail = curr->data;
+          
           //tmpp->isEnd = 1;
+          #ifdef debug
+          printf("[%d] isRev: %d\thead: %d\ttail: %d\n",tmpp->data,tmpp->isRev,tmpp->head,tmpp->tail);
+          printf("[%d] isRev: %d\thead: %d\ttail: %d\n",tmpp->tail,node[tmpp->tail]->isRev,node[tmpp->tail]->head,node[tmpp->tail]->tail);
+          #endif
         } else if(lastRev == 1 && curr->prev!=NULL) {
           curr = curr->prev;
           tmpp = curr;
           curr = curr->next;
+
+          
+          tmpp->head = tmpp->data;
+          tmpp->tail = lastTail;
+          tmpp->isRev = lastRev;
+          node[tmpp->tail]->head = tmpp->data;
+          node[tmpp->tail]->tail = lastTail;
+          node[tmpp->tail]->isRev = lastRev;
+
           updateLast(curr, lastRev, lastHead, lastTail);
           #ifdef debug
-          cout << "curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
+          cout << "(lastRev:1) curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
           #endif
 
           //Last node before the unchained
@@ -173,16 +191,15 @@ int main() {
           } else {
             tmpp->next = NULL;
           }
-          tmpp->head = tmpp->data;
-          tmpp->tail = lastTail;
-          tmpp->isRev = lastRev;
-          node[tmpp->tail]->head = tmpp->data;
-          node[tmpp->tail]->tail = lastTail;
-          node[tmpp->tail]->isRev = lastRev;
           //tmpp->isEnd = 1;
+          #ifdef debug
+          printf("[%d] isRev: %d\thead: %d\ttail: %d\n",tmpp->data,tmpp->isRev,tmpp->head,tmpp->tail);
+          printf("[%d] isRev: %d\thead: %d\ttail: %d\n",tmpp->tail,node[tmpp->tail]->isRev,node[tmpp->tail]->head,node[tmpp->tail]->tail);
+          #endif
+
         }
 
-        if (node[at]->tail==at) {
+        if (node[at]->tail==at && node[at]->head!=at) {
           #ifdef debug
           cout << "this is reverse!" <<endl;
           #endif
@@ -209,11 +226,13 @@ int main() {
             tmp = node[at]->head;
             node[at]->head = at;
             node[at]->tail = tmp;*/
-            node[at]->isRev = 0;
+            //node[at]->isRev = 0;
             #ifdef debug
+            tmp = node[at]->head;
             cout << "NORMAL!" << endl;
+            printf("[%d] isRev: %d\thead: %d\ttail: %d\n",at,node[at]->isRev,node[at]->head,node[at]->tail);
+            printf("[%d] isRev: %d\thead: %d\ttail: %d\n",tmp,node[tmp]->isRev,node[tmp]->head,node[tmp]->tail);
             //print_list(node[at]);
-            cout << endl;
             #endif
           //}
           node[at]->prev = curr;
@@ -232,24 +251,25 @@ int main() {
             node[at]->tail = tmp;
             node[at]->isRev = (node[at]->isRev==1)?0:1;
             #ifdef debug
-            cout << "Swapping head and tail to REVERSE!" << endl;
+            cout << "Swapping head and tail of "<<at<<" for REVERSE!" << endl;
+            printf("[%d] isRev: %d\thead: %d\ttail: %d\n",at,node[at]->isRev,node[at]->head,node[at]->tail);
+            printf("[%d] isRev: %d\thead: %d\ttail: %d\n",tmp,node[tmp]->isRev,node[tmp]->head,node[tmp]->tail);
             //print_list(node[at]);
-            cout << endl;
             #endif
           //}
           if(node[at]->isRev==1) { 
             node[at]->next = curr;
-            node[node[at]->tail]->prev = NULL;
+            //node[node[at]->tail]->prev = NULL;
           } else {
             node[at]->prev = curr;
-            node[node[at]->tail]->next = NULL;
+            //node[node[at]->tail]->next = NULL;
           }
         }
         
         
         //node[at]->isEnd = 0;
         //node[at]->isRev = mode;
-        curr->isRev = lastRev;
+        //curr->isRev = lastRev;
 
         if(lastRev==0) curr->next = node[at]; 
         else if (lastRev==1) curr->prev = node[at];
