@@ -68,19 +68,25 @@ void reverse_line(Node* header) {
 Node* node[100002];
 void updateLast(Node*& curr, int& lastRev, int& lastHead, int& lastTail) {
   if(((curr->head!=0&&curr==node[curr->head])||(curr->tail!=0&&curr==node[curr->tail])) && curr->isRev!=lastRev) {
+    #ifdef debug
     cout <<"lastRev is changed to " << curr->isRev << endl;
+    #endif
     lastRev = curr->isRev;
   }
   if(curr->head!=0) {
     if(curr->head!=lastHead) {
       lastHead = curr->head;
-      cout <<"lastHead is changed to "<<lastHead<<endl; 
+      #ifdef debug
+      cout <<"lastHead is changed to "<<lastHead<<endl;
+      #endif
     }
   }
   if(curr->tail!=0) {
     if(curr->tail!=lastTail) {
       lastTail = curr->tail;
-      cout <<"lastTail is changed to "<<lastTail<<endl; 
+      #ifdef debug
+      cout <<"lastTail is changed to "<<lastTail<<endl;
+      #endif 
     }
   }
 }
@@ -144,8 +150,9 @@ int main() {
           if(curr->isRev==0) curr = curr->prev;
           else curr = curr->next;
           updateLast(curr, lastRev, lastHead, lastTail);
+          #ifdef debug
           cout << "curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
-
+          #endif
       
           //curr- Last node before the unchained
           //tmpp - Unchained head node  
@@ -168,7 +175,9 @@ int main() {
           tmpp = curr;
           curr = curr->next;
           updateLast(curr, lastRev, lastHead, lastTail);
+          #ifdef debug
           cout << "curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
+          #endif
 
           //Last node before the unchained
           //curr->head = curr->data;
@@ -190,7 +199,9 @@ int main() {
         }
 
         if (node[at]->tail==at) {
+          #ifdef debug
           cout << "this is reverse!" <<endl;
+          #endif
           //reverse_line(node[at]);
           mode = 1;
           //print_list(node[at]);
@@ -215,9 +226,11 @@ int main() {
             node[at]->head = at;
             node[at]->tail = tmp;*/
             node[at]->isRev = 0;
+            #ifdef debug
             cout << "NORMAL!" << endl;
             //print_list(node[at]);
             cout << endl;
+            #endif
           //}
           node[at]->prev = curr;
           node[node[at]->tail]->next = NULL;
@@ -234,9 +247,11 @@ int main() {
             node[at]->head = at;
             node[at]->tail = tmp;
             node[at]->isRev = (node[at]->isRev==1)?0:1;
+            #ifdef debug
             cout << "Swapping head and tail to REVERSE!" << endl;
             //print_list(node[at]);
             cout << endl;
+            #endif
           //}
           if(node[at]->isRev==1) { 
             node[at]->next = curr;
@@ -265,7 +280,10 @@ int main() {
     //cout << endl << "--------" << endl;
   
     //cout << ""<< curr->data << endl;
-    printf("\t%d\n",curr->data);
+    #ifdef debug
+    printf("\t");
+    #endif
+    printf("%d\n",curr->data);
   }
   return 0;
 }
