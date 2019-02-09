@@ -5,8 +5,8 @@ struct Node {
   int isRev = 0;
   Node* prev = NULL;
   Node* next = NULL;
-  Node* head = NULL;
-  Node* tail = NULL;
+  int head = 0;
+  int tail = 0;
   Node(int data)
     : data(data) {}
 };
@@ -77,13 +77,13 @@ int main() {
     cin >> tmp;    
 
     node[lastI+1]->prev = NULL;
-    node[lastI+1]->head = node[lastI+1];
-    node[lastI+1]->tail = node[lastI+tmp];
+    node[lastI+1]->head = lastI+1;
+    node[lastI+1]->tail = lastI+tmp;
     //node[lastI+1]->isEnd = 1;
 
     node[lastI+tmp]->next = NULL;
-    node[lastI+tmp]->head = node[lastI+1];
-    node[lastI+tmp]->tail = node[lastI+tmp];
+    node[lastI+tmp]->head = lastI+1;
+    node[lastI+tmp]->tail = lastI+tmp;
     //node[lastI+tmp]->isEnd = 1;
 
     lastI+=tmp;
@@ -92,25 +92,25 @@ int main() {
   Node* curr = node[1];
   Node* tmpp;
   int lastRev = 0;
-  Node*& lastHead = curr->head;
-  Node*& lastTail = curr->tail;
+  int lastHead = curr->head;
+  int lastTail = curr->tail;
   char cmd; int at, mode;
   for(int nn=0;nn<n;nn++){
     cin >> cmd;
     /*cout << "--------" << endl;
     print_list(node[1]);
     cout << endl << "--------" << endl;*/
-    if(((curr->head!=NULL&&curr==curr->head)||(curr->tail!=NULL&&curr==curr->tail)) && curr->isRev!=lastRev) {
+    if(((curr->head!=0&&curr==node[curr->head])||(curr->tail!=0&&curr==node[curr->tail])) && curr->isRev!=lastRev) {
       //cout <<"lastRev is changed to " << curr->isRev << endl;
       lastRev = curr->isRev;
     }
-    if(curr->head!=NULL) {
+    if(curr->head!=0) {
       if(curr->head!=lastHead) {
         lastHead = curr->head;
         //cout <<"lastHead is changed to "<<lastHead->data<<endl; 
       }
     }
-    if(curr->tail!=NULL) {
+    if(curr->tail!=0) {
       if(curr->tail!=lastTail) {
         lastTail = curr->tail;
         //cout <<"lastTail is changed to "<<lastTail->data<<endl; 
@@ -146,7 +146,7 @@ int main() {
           curr = curr->next;
 
           //Last node before the unchained
-          curr->head = curr;
+          //curr->head = curr->data;
           //curr->isEnd = 1;
           
           //Unchained head node
@@ -172,37 +172,37 @@ int main() {
         cout << endl << "++++++++" << endl;*/
         if (mode==0) {
           if(node[at]->isRev==1) {
-            node[at]->head->tail = node[at]->head;
-            node[at]->head->head = node[at];
-            node[at]->head->isRev = 0;
+            node[node[at]->head]->tail = node[at]->head;
+            node[node[at]->head]->head = at;
+            node[node[at]->head]->isRev = 0;
 
-            tmpp = node[at]->head;
-            node[at]->head = node[at];
-            node[at]->tail = tmpp;
+            tmp = node[at]->head;
+            node[at]->head = at;
+            node[at]->tail = tmp;
             /*cout << "Swapping head and tail to NORMAL!" << endl;
             print_list(node[at]);
             cout << endl;*/
           }
           node[at]->prev = curr;
-          node[at]->tail->next = NULL;
+          node[node[at]->tail]->next = NULL;
 
         } else {
           
           if(node[at]->isRev==0) {
             //node[at] becomes head
-            node[at]->head->tail = node[at]->head;
-            node[at]->head->head = node[at];
-            node[at]->head->isRev = 1;
+            node[node[at]->head]->tail = node[at]->head;
+            node[node[at]->head]->head = at;
+            node[node[at]->head]->isRev = 1;
 
-            tmpp = node[at]->head;
-            node[at]->head = node[at];
-            node[at]->tail = tmpp;
+            tmp = node[at]->head;
+            node[at]->head = at;
+            node[at]->tail = tmp;
             /*cout << "Swapping head and tail to REVERSE!" << endl;
             print_list(node[at]);
             cout << endl;*/
           }
           node[at]->next = curr;
-          node[at]->tail->prev = NULL;
+          node[node[at]->tail]->prev = NULL;
         }
         
         
