@@ -230,12 +230,16 @@ int main() {
             tmpp = rev.top();
 
             tmpp->next = NULL;
-            tmpp->head = rev.bottom()->data;
+            
             tmpp->tail = tmpp->data;
 
-            rev.bottom()->head = rev.bottom()->data;
-            rev.bottom()->tail = tmpp->data;
-            rev.bottom()->prev = NULL;
+            if(rev.bottom()!=NULL) {
+              tmpp->head = rev.bottom()->data;
+
+              rev.bottom()->head = rev.bottom()->data;
+              rev.bottom()->tail = tmpp->data;
+              rev.bottom()->prev = NULL;
+            }
 
             rev.remove();
             
