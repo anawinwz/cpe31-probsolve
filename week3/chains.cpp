@@ -302,8 +302,10 @@ int main() {
         }*/        
 
         node[at]->head = lastHead;
-        node[node[at]->tail]->head = lastHead;
-        node[lastHead]->tail = node[at]->tail;
+        if(node[at]->tail!=0) {
+          node[node[at]->tail]->head = lastHead;
+          node[lastHead]->tail = node[at]->tail;
+        }
         node[at]->prev = curr;    
 
         curr->next = node[at]; 
