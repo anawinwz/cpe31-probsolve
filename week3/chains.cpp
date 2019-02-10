@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<iostream>
-using namespace std;
 //#define debug TRUE
+using namespace std;
+
 #define gc getchar_unlocked
 void scan_integer( int &x )
 {
@@ -29,6 +30,87 @@ struct Node {
   Node(int data)
     : data(data) {}
 };
+Node* node[100002];
+class Stack {
+  private:
+    Node* header = NULL;
+    Node* tail = NULL;
+  public:
+    int isRev;
+    bool is_empty();
+    Node* top();
+    Node* bottom();
+    void push_list(Node*& list);
+    Node* remove();
+    Node* pop();
+};
+bool Stack::is_empty() {
+  return (header==NULL);
+}
+Node* Stack::top() {
+  return header;
+}
+Node* Stack::bottom() {
+  return tail;
+}
+void Stack::push_list(Node*& list) {
+  #ifdef debug
+    cout << "Push list!!"<<endl;
+    cout << "Push list: "<<list->data<<" "<<list->head<<endl;
+  #endif
+
+  int tmp = list->head;
+  list->head = list->tail;
+  list->tail = tmp;
+
+  node[list->tail]->head = list->data;
+  node[list->tail]->tail = list->tail; 
+  
+  if (tail==NULL) {
+    header = list;
+  } else {
+    tail->prev = list;
+  }
+  tail = node[list->tail];
+}
+Node* Stack::remove() {
+  #ifdef debug
+    cout << "Try to REMOVE stack!"<<endl;
+  #endif
+  if(header==NULL) return NULL;
+
+  #ifdef debug
+    cout << "[REMOVE] Header is "<<header->data<<endl;
+  #endif
+
+  Node* tmp = header;
+  header = NULL;
+  tail = NULL;
+  return tmp;
+}
+Node* Stack::pop() {
+  #ifdef debug
+    cout << "Try to POP stack!"<<endl;
+  #endif
+  if(header==NULL) return NULL;
+
+  #ifdef debug
+    cout << "[POP] Header is "<<header->data<<endl;
+  #endif
+
+  //Reverse before POP
+  Node* tmp = header->next;
+  header->next = header->prev;
+  header->prev = tmp;
+  #ifdef debug
+    cout << "Reverse Success!" <<endl;
+  #endif
+
+  tmp = header;
+  header = header->next;
+  if(header==NULL) tail = NULL;
+  return tmp;
+}
 void print_list(Node* header) {
   Node* p = header;
   //int isRev = (p->isRev==1 || (p->next==NULL && p->prev!=NULL)) ? 1 : 0;
@@ -40,7 +122,6 @@ void print_list(Node* header) {
     p = p->next;
   }
 }
-Node* node[100002];
 void reverse_line(Node* header) {
   Node* tmp;
   Node* p = header;
@@ -87,18 +168,20 @@ int main() {
     scan_integer(tmp); 
 
     node[lastI+1]->prev = NULL;
-    node[lastI+1]->head = 0;
+    node[lastI+1]->head = lastI+1;
     node[lastI+1]->tail = lastI+tmp;
     //node[lastI+1]->isEnd = 1;
 
     node[lastI+tmp]->next = NULL;
-    node[lastI+tmp]->head = 0;
+    node[lastI+tmp]->head = lastI+1;
     node[lastI+tmp]->tail = lastI+tmp;
     //node[lastI+tmp]->isEnd = 1;
 
     lastI+=tmp;
   }
 
+  Stack rev;
+  rev.isRev = 1;
   Node* curr = node[1];
   curr->head = 1;
   Node* tmpp;
@@ -114,38 +197,61 @@ int main() {
     if (curr->head==0) curr->head = lastHead;
     switch(cmd) {
       case 'F':
-        if(curr->next!=NULL) curr=curr->next;
+        if(curr->next!=NULL) {
+          if(!rev.is_empty() && curr->next==rev.top()) curr=rev.pop();
+          else curr=curr->next;
+        }
         break;
       case 'B':
         if(curr->prev!=NULL) curr=curr->prev;
         break;
       case 'C':
-        //scanf("%d",&at);
         scan_integer(at);
-       // cout << "try to combine " <<at<<endl;
+        #ifdef debug
+        cout << "Try to combine " <<at<<endl;
+        #endif
         if(curr->next!=NULL) {
+          if(!rev.is_empty() && curr->next==rev.top()) {
+            #ifdef debug
+            cout << "Reverse in progress during new combine!\n";
+            printf("Try to remove (%d,%d)\n",rev.top()->data,rev.bottom()->data);
+            #endif
+            tmpp = rev.top();
 
-          curr = curr->next;
+            tmpp->next = NULL;
+            tmpp->head = rev.bottom()->data;
+            tmpp->tail = tmpp->data;
+            rev.bottom()->head = rev.bottom()->data;
+            rev.bottom()->tail = tmpp->data;
 
-          tmpp = curr;
-          curr = curr->prev;
+            rev.remove();
+            
+          } else {
+            curr = curr->next;
+            tmpp = curr;
+            curr = curr->prev;
 
+            tmpp->prev = NULL;
+            tmpp->head = tmpp->data;
+            tmpp->tail = lastTail;
+
+            node[lastTail]->head = tmpp->data;
+            
+          }
+        
           /*
             curr - Last node before the unchained
             tmpp - Unchained head node
             <[curr]> ---X-CUT-X--- <[tmpp]> <[...]> <[...]
               ^                       ^
-            new tail               new head of old tail
+            new lastTail          new head of old lastTail
           */
-          node[lastTail]->head = tmpp->data;
           
-          tmpp->prev = NULL;
-          tmpp->head = tmpp->data;
-          tmpp->tail = lastTail;
 
           lastTail = curr->data;
           node[lastHead]->tail = lastTail;
           curr->tail = lastTail;
+        
 
           updateLast(curr, lastHead, lastTail);
           #ifdef debug
@@ -165,13 +271,34 @@ int main() {
           #ifdef debug
           cout << "Need to reverse first! Node: " << at <<endl;
           #endif
-          reverse_line(node[at]);
+          //reverse_line(node[at]);
+          if(!rev.is_empty()) {
+            tmpp = rev.top();
+
+            /*
+            7
+            6
+            5
+            4
+            */
+
+            tmpp->next = NULL;
+
+            tmpp->head = rev.bottom()->data;
+            tmpp->tail = tmpp->data;
+            rev.bottom()->head = rev.bottom()->data;
+            rev.bottom()->tail = tmpp->data;
+
+            rev.remove();
+          }
+          rev.push_list(node[at]);
+          node[at] = rev.pop();
         }
         
-        if(curr->next!=NULL) {
+        /*if(curr->next!=NULL) {
           curr->next->prev = NULL;
-        }            
-        
+        }*/        
+
         node[at]->head = lastHead;
         node[node[at]->tail]->head = lastHead;
         node[lastHead]->tail = node[at]->tail;
@@ -179,14 +306,17 @@ int main() {
 
         curr->next = node[at]; 
         curr = curr->next;
+        
         updateLast(curr, lastHead, lastTail);
+        
         break;
     }
   
     //cout << ""<< curr->data << endl;
     #ifdef debug
-    print_list(node[1]);
-    printf("\n");
+    //print_list(node[1]);
+    if(curr==NULL) cout<<"curr is NULL!!!" <<endl;
+    printf("\t");
     #endif
     printf("%d\n",curr->data);
   }
