@@ -63,15 +63,17 @@ void Stack::push_list(Node*& list) {
   list->head = list->tail;
   list->tail = tmp;
 
-  node[list->tail]->head = list->data;
-  node[list->tail]->tail = list->tail; 
+  if(list->tail!=0) {
+    node[list->tail]->head = list->data;
+    node[list->tail]->tail = list->tail; 
+  }
   
   if (tail==NULL) {
     header = list;
   } else {
     tail->prev = list;
   }
-  tail = node[list->tail];
+  if(list->tail!=0) tail = node[list->tail];
 }
 Node* Stack::remove() {
   #ifdef debug
