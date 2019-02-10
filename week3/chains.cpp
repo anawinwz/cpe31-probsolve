@@ -297,11 +297,13 @@ int main() {
 
             tmpp->next = NULL;
 
-            tmpp->head = rev.bottom()->data;
-            tmpp->tail = tmpp->data;
-            rev.bottom()->head = rev.bottom()->data;
-            rev.bottom()->tail = tmpp->data;
-
+            if(rev.bottom()!=NULL) {
+              tmpp->head = rev.bottom()->data;
+              tmpp->tail = tmpp->data;
+              rev.bottom()->head = rev.bottom()->data;
+              rev.bottom()->tail = tmpp->data;
+            }
+            
             rev.remove();
           }
           rev.push_list(node[at]);
