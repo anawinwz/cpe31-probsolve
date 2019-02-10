@@ -1,8 +1,7 @@
 #include<stdio.h>
 #include<iostream>
-//#define debug TRUE
 using namespace std;
-
+//#define debug TRUE
 #define gc getchar_unlocked
 void scan_integer( int &x )
 {
@@ -30,99 +29,6 @@ struct Node {
   Node(int data)
     : data(data) {}
 };
-Node* node[100002];
-class Stack {
-  private:
-    Node* header = NULL;
-    Node* tail = NULL;
-  public:
-    int isRev;
-    bool is_empty();
-    Node* top();
-    Node* bottom();
-    void push_list(Node*& list);
-    Node* remove();
-    Node* pop();
-};
-bool Stack::is_empty() {
-  return (header==NULL);
-}
-Node* Stack::top() {
-  return header;
-}
-Node* Stack::bottom() {
-  return tail;
-}
-void Stack::push_list(Node*& list) {
-  #ifdef debug
-    cout << "Push list!!"<<endl;
-    cout << "Push list: "<<list->data<<" "<<list->head<<endl;
-  #endif
-
-  int tmp = list->head;
-  list->head = list->tail;
-  list->tail = tmp;
-
-  if(list->tail!=0) {
-    node[list->tail]->head = list->data;
-    node[list->tail]->tail = list->tail; 
-  }
-  
-  if (header==NULL) {
-    header = list;
-  } else {
-    header->next = node[list->tail];
-    list->prev = header;
-    header = list;
-  }
-  if(tail==NULL && list->tail!=0) tail = node[list->tail];
-}
-Node* Stack::remove() {
-  #ifdef debug
-    cout << "Try to REMOVE stack!"<<endl;
-  #endif
-  if(header==NULL) return NULL;
-
-  #ifdef debug
-    cout << "[REMOVE] Header is "<<header->data<<endl;
-  #endif
-
-  Node* tmp = header;
-  header = NULL;
-  tail = NULL;
-  return tmp;
-}
-Node* Stack::pop() {
-  #ifdef debug
-    cout << "Try to POP stack!"<<endl;
-  #endif
-  if(header==NULL) return NULL;
-
-  #ifdef debug
-    cout << "[POP] Header is "<<header->data<<endl;
-  #endif
-
-  //Reverse before POP
-  Node* tmp = header->next;
-  header->next = header->prev;
-  header->prev = tmp;
-  #ifdef debug
-    cout << "Reverse Success!" <<endl;
-  #endif
-
-  tmp = header;
-  if(header->next!=NULL) {
-    header->next->head = header->next->data;
-    header->next->tail = header->tail;
-    if(tail!=NULL) {
-      tail->head = header->next->data;
-      tail->tail = header->tail;
-    } 
-  }
-  header = header->next;
-  if(header==NULL) tail = NULL;
-  return tmp;
-}
 void print_list(Node* header) {
   Node* p = header;
   //int isRev = (p->isRev==1 || (p->next==NULL && p->prev!=NULL)) ? 1 : 0;
@@ -134,6 +40,7 @@ void print_list(Node* header) {
     p = p->next;
   }
 }
+Node* node[100002];
 void reverse_line(Node* header) {
   Node* tmp;
   Node* p = header;
@@ -144,9 +51,16 @@ void reverse_line(Node* header) {
     p = p->next;
   }
 }
+void reverse_node(Node* header) {
+  #ifdef debug
+    cout << "Reverse Node : "<<header->data<<endl;
+  #endif
+  Node* p = header;
+  Node* tmp = p->next;
+  p->next = p->prev;
+  p->prev = tmp;
+}
 void updateLast(Node*& curr, int& lastHead, int& lastTail) {
-  /*curr->head = lastHead;
-  curr->tail = lastTail;
   if(curr->head!=0) {
     if(curr->head!=lastHead) {
       lastHead = curr->head;
@@ -162,7 +76,7 @@ void updateLast(Node*& curr, int& lastHead, int& lastTail) {
       cout <<"lastTail is changed to "<<lastTail<<endl;
       #endif 
     }
-  }*/
+  }
 }
 int main() {
   for (int i=1;i<=100000;i++) node[i] = new Node(i);
@@ -182,20 +96,18 @@ int main() {
     scan_integer(tmp); 
 
     node[lastI+1]->prev = NULL;
-    node[lastI+1]->head = lastI+1;
+    node[lastI+1]->head = 0;
     node[lastI+1]->tail = lastI+tmp;
     //node[lastI+1]->isEnd = 1;
 
     node[lastI+tmp]->next = NULL;
-    node[lastI+tmp]->head = lastI+1;
+    node[lastI+tmp]->head = 0;
     node[lastI+tmp]->tail = lastI+tmp;
     //node[lastI+tmp]->isEnd = 1;
 
     lastI+=tmp;
   }
 
-  Stack rev;
-  rev.isRev = 1;
   Node* curr = node[1];
   curr->head = 1;
   Node* tmpp;
@@ -203,76 +115,54 @@ int main() {
   int lastTail = curr->tail;
   char cmd; int at;//, mode;
   for(int nn=0;nn<n;nn++){
-    //if(curr==NULL) return 0;
     scanf(" %c",&cmd);
     /*cout << "--------" << endl;
     print_list(node[1]);
     cout << endl << "--------" << endl;*/
-    //updateLast(curr, lastHead, lastTail);
+    updateLast(curr, lastHead, lastTail);
+    if (curr->head==0) curr->head = lastHead;
     switch(cmd) {
       case 'F':
         if(curr->next!=NULL) {
-          if(!rev.is_empty() && curr->next==rev.top()) curr=rev.pop();
-          else curr=curr->next;
+          if(curr->next!=NULL && curr->next->next==curr) reverse_node(curr->next);
+          curr=curr->next;
         }
         break;
       case 'B':
-        if(curr->prev!=NULL) curr=curr->prev;
+        if(curr->prev!=NULL) {
+          //if(curr->next!=NULL && curr->prev->next==curr) reverse_node(curr->prev);
+          curr=curr->prev;
+        }
         break;
       case 'C':
+        //scanf("%d",&at);
         scan_integer(at);
-        #ifdef debug
-        cout << "Try to combine " <<at<<endl;
-        #endif
-        /*
-          curr - Last node before the unchained
-          tmpp - Unchained head node
-          <[curr]> ---X-CUT-X--- <[tmpp]> <[...]> <[...]
-            ^                       ^
-          new lastTail          new head of old lastTail
-        */
+       // cout << "try to combine " <<at<<endl;
         if(curr->next!=NULL) {
-          if(!rev.is_empty() && curr->next==rev.top()) {
-            #ifdef debug
-            cout << "Reverse in progress during new combine!\n";
-            printf("Try to remove (%d,%d)\n",rev.top()->data,rev.bottom()->data);
-            #endif
-            tmpp = rev.top();
+          if(curr->next->next==curr) reverse_node(curr->next);
+          //curr = curr->next;
 
-            tmpp->next = NULL;
-            
-            tmpp->tail = tmpp->data;
+          tmpp = curr->next;
+          //curr = curr->prev;
 
-            if(rev.bottom()!=NULL) {
-              tmpp->head = rev.bottom()->data;
-
-              rev.bottom()->head = rev.bottom()->data;
-              rev.bottom()->tail = tmpp->data;
-              rev.bottom()->prev = NULL;
-            }
-
-            rev.remove();
-            
-          } else {
-            tmpp = curr->next;
-
-            tmpp->prev = NULL;
-            tmpp->head = tmpp->data;
-            //tmpp->tail = lastTail;
-
-            node[lastTail]->head = tmpp->data;
-            //node[lastTail]->tail = lastTail;
-          }
-        
+          /*
+            curr - Last node before the unchained
+            tmpp - Unchained head node
+            <[curr]> ---X-CUT-X--- <[tmpp]> <[...]> <[...]
+              ^                       ^
+            new tail               new head of old tail
+          */
+          node[lastTail]->head = tmpp->data;
           
-          
+          tmpp->prev = NULL;
+          tmpp->head = tmpp->data;
+          tmpp->tail = lastTail;
 
-          //lastTail = curr->data;
-          //node[lastHead]->tail = lastTail;
-          //curr->tail = lastTail;
-        
+          lastTail = curr->data;
+          node[lastHead]->tail = lastTail;
+          curr->tail = lastTail;
 
-          //updateLast(curr, lastHead, lastTail);
+          updateLast(curr, lastHead, lastTail);
           #ifdef debug
           cout << "curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
           #endif
@@ -291,63 +181,29 @@ int main() {
           cout << "Need to reverse first! Node: " << at <<endl;
           #endif
           //reverse_line(node[at]);
-          if(!rev.is_empty()) {
-            tmpp = rev.top();
-
-            /*
-            7
-            6
-            5
-            4
-            */
-
-            tmpp->next = NULL;
-
-            if(rev.bottom()!=NULL) {
-              tmpp->head = rev.bottom()->data;
-              tmpp->tail = tmpp->data;
-              rev.bottom()->head = rev.bottom()->data;
-              rev.bottom()->tail = tmpp->data;
-            }
-            
-            rev.remove();
-          }
-          rev.push_list(node[at]);
-          node[at] = rev.pop();
+          reverse_node(node[at]);
         }
         
-        /*if(curr->next!=NULL) {
+        if(curr->next!=NULL) {
           curr->next->prev = NULL;
-        }*/        
-
-        //node[at]->head = lastHead;
-        tmp = 0;
-        if(node[at]->tail!=0) tmp = node[at]->tail;
-        else if(node[at]->head!=0) tmp = node[node[at]->head]->tail;
-        if(tmp!=0) {
-          node[tmp]->head = lastHead;
-          //node[lastHead]->tail = node[at]->tail;
-        }
+        }            
+        
+        node[at]->head = lastHead;
+        node[node[at]->tail]->head = lastHead;
+        node[lastHead]->tail = node[at]->tail;
         node[at]->prev = curr;    
-        //if(curr==NULL) return 0;
+
         curr->next = node[at]; 
         curr = curr->next;
-        
-        //updateLast(curr, lastHead, lastTail);
-        
+        updateLast(curr, lastHead, lastTail);
         break;
     }
   
     //cout << ""<< curr->data << endl;
     #ifdef debug
     //print_list(node[1]);
-    if(curr==NULL) cout<<"curr is NULL!!!" <<endl;
-    printf("\t");
+    printf("\n");
     #endif
-    //if(curr==NULL) return 0;
-    curr->head = lastHead;
-    lastTail = curr->data;
-    node[lastHead]->tail = lastTail;
     printf("%d\n",curr->data);
   }
   return 0;
