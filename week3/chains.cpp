@@ -201,6 +201,7 @@ int main() {
   int lastTail = curr->tail;
   char cmd; int at;//, mode;
   for(int nn=0;nn<n;nn++){
+    if(curr==NULL) return 0;
     scanf(" %c",&cmd);
     /*cout << "--------" << endl;
     print_list(node[1]);
@@ -327,11 +328,11 @@ int main() {
           //node[lastHead]->tail = node[at]->tail;
         }
         node[at]->prev = curr;    
-
+        if(curr==NULL) return 0;
         curr->next = node[at]; 
         curr = curr->next;
         
-        updateLast(curr, lastHead, lastTail);
+        //updateLast(curr, lastHead, lastTail);
         
         break;
     }
@@ -342,6 +343,7 @@ int main() {
     if(curr==NULL) cout<<"curr is NULL!!!" <<endl;
     printf("\t");
     #endif
+    if(curr==NULL) return 0;
     curr->head = lastHead;
     lastTail = curr->data;
     node[lastHead]->tail = lastTail;
