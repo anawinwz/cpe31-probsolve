@@ -195,6 +195,7 @@ int main() {
     cout << endl << "--------" << endl;*/
     updateLast(curr, lastHead, lastTail);
     if (curr->head==0) curr->head = lastHead;
+    if (curr->tail==0) curr->tail = lastTail;
     switch(cmd) {
       case 'F':
         if(curr->next!=NULL) {
@@ -221,6 +222,7 @@ int main() {
             tmpp->next = NULL;
             tmpp->head = rev.bottom()->data;
             tmpp->tail = tmpp->data;
+
             rev.bottom()->head = rev.bottom()->data;
             rev.bottom()->tail = tmpp->data;
 
@@ -236,7 +238,7 @@ int main() {
             tmpp->tail = lastTail;
 
             node[lastTail]->head = tmpp->data;
-            
+            node[lastTail]->tail = lastTail;
           }
         
           /*
