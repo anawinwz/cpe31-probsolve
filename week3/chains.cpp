@@ -108,8 +108,12 @@ Node* Stack::pop() {
 
   tmp = header;
   if(header->next!=NULL) {
-    header->next->head = header->data;
+    header->next->head = header->head;
     header->next->tail = header->tail;
+    if(tail!=NULL) {
+      tail->head = header->head;
+      tail->tail = header->tail;
+    } 
   }
   header = header->next;
   if(header==NULL) tail = NULL;
@@ -229,6 +233,7 @@ int main() {
 
             rev.bottom()->head = rev.bottom()->data;
             rev.bottom()->tail = tmpp->data;
+            rev.bottom()->prev = NULL;
 
             rev.remove();
             
