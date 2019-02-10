@@ -107,6 +107,10 @@ Node* Stack::pop() {
   #endif
 
   tmp = header;
+  if(header->next!=NULL) {
+    header->next->head = header->data;
+    header->next->tail = header->tail;
+  }
   header = header->next;
   if(header==NULL) tail = NULL;
   return tmp;
@@ -295,6 +299,7 @@ int main() {
           }
           rev.push_list(node[at]);
           node[at] = rev.pop();
+          
         }
         
         /*if(curr->next!=NULL) {
