@@ -137,6 +137,8 @@ void reverse_line(Node* header) {
   }
 }
 void updateLast(Node*& curr, int& lastHead, int& lastTail) {
+  /*curr->head = lastHead;
+  curr->tail = lastTail;
   if(curr->head!=0) {
     if(curr->head!=lastHead) {
       lastHead = curr->head;
@@ -152,7 +154,7 @@ void updateLast(Node*& curr, int& lastHead, int& lastTail) {
       cout <<"lastTail is changed to "<<lastTail<<endl;
       #endif 
     }
-  }
+  }*/
 }
 int main() {
   for (int i=1;i<=100000;i++) node[i] = new Node(i);
@@ -197,9 +199,7 @@ int main() {
     /*cout << "--------" << endl;
     print_list(node[1]);
     cout << endl << "--------" << endl;*/
-    updateLast(curr, lastHead, lastTail);
-    if (curr->head==0) curr->head = lastHead;
-    if (curr->tail==0) curr->tail = lastTail;
+    //updateLast(curr, lastHead, lastTail);
     switch(cmd) {
       case 'F':
         if(curr->next!=NULL) {
@@ -239,10 +239,10 @@ int main() {
 
             tmpp->prev = NULL;
             tmpp->head = tmpp->data;
-            tmpp->tail = lastTail;
+            //tmpp->tail = lastTail;
 
             node[lastTail]->head = tmpp->data;
-            node[lastTail]->tail = lastTail;
+            //node[lastTail]->tail = lastTail;
           }
         
           /*
@@ -254,12 +254,12 @@ int main() {
           */
           
 
-          lastTail = curr->data;
-          node[lastHead]->tail = lastTail;
-          curr->tail = lastTail;
+          //lastTail = curr->data;
+          //node[lastHead]->tail = lastTail;
+          //curr->tail = lastTail;
         
 
-          updateLast(curr, lastHead, lastTail);
+          //updateLast(curr, lastHead, lastTail);
           #ifdef debug
           cout << "curr is " <<curr->data<< ", tmpp is "<<tmpp->data<<endl;
           #endif
@@ -299,17 +299,19 @@ int main() {
           }
           rev.push_list(node[at]);
           node[at] = rev.pop();
-          
         }
         
         /*if(curr->next!=NULL) {
           curr->next->prev = NULL;
         }*/        
 
-        node[at]->head = lastHead;
-        if(node[at]->tail!=0) {
-          node[node[at]->tail]->head = lastHead;
-          node[lastHead]->tail = node[at]->tail;
+        //node[at]->head = lastHead;
+        tmp = 0;
+        if(node[at]->tail!=0) tmp = node[at]->tail;
+        else if(node[at]->head!=0) tmp = node[node[at]->head]->tail;
+        if(tmp!=0) {
+          node[tmp]->head = lastHead;
+          //node[lastHead]->tail = node[at]->tail;
         }
         node[at]->prev = curr;    
 
@@ -327,6 +329,9 @@ int main() {
     if(curr==NULL) cout<<"curr is NULL!!!" <<endl;
     printf("\t");
     #endif
+    curr->head = lastHead;
+    lastTail = curr->data;
+    node[lastHead]->tail = lastTail;
     printf("%d\n",curr->data);
   }
   return 0;
