@@ -68,12 +68,14 @@ void Stack::push_list(Node*& list) {
     node[list->tail]->tail = list->tail; 
   }
   
-  if (tail==NULL) {
+  if (header==NULL) {
     header = list;
   } else {
-    tail->prev = list;
+    header->next = node[list->tail];
+    list->prev = header;
+    header = list;
   }
-  if(list->tail!=0) tail = node[list->tail];
+  if(tail==NULL && list->tail!=0) tail = node[list->tail];
 }
 Node* Stack::remove() {
   #ifdef debug
@@ -110,10 +112,10 @@ Node* Stack::pop() {
 
   tmp = header;
   if(header->next!=NULL) {
-    header->next->head = header->head;
+    header->next->head = header->next->data;
     header->next->tail = header->tail;
     if(tail!=NULL) {
-      tail->head = header->head;
+      tail->head = header->next->data;
       tail->tail = header->tail;
     } 
   }
@@ -222,6 +224,13 @@ int main() {
         #ifdef debug
         cout << "Try to combine " <<at<<endl;
         #endif
+        /*
+          curr - Last node before the unchained
+          tmpp - Unchained head node
+          <[curr]> ---X-CUT-X--- <[tmpp]> <[...]> <[...]
+            ^                       ^
+          new lastTail          new head of old lastTail
+        */
         if(curr->next!=NULL) {
           if(!rev.is_empty() && curr->next==rev.top()) {
             #ifdef debug
@@ -255,13 +264,7 @@ int main() {
             //node[lastTail]->tail = lastTail;
           }
         
-          /*
-            curr - Last node before the unchained
-            tmpp - Unchained head node
-            <[curr]> ---X-CUT-X--- <[tmpp]> <[...]> <[...]
-              ^                       ^
-            new lastTail          new head of old lastTail
-          */
+          
           
 
           //lastTail = curr->data;
