@@ -1,4 +1,5 @@
 #include<cstdio>
+#include<cstring>
 #include<list>
 #include<vector>
 #include<utility>
@@ -13,8 +14,12 @@ int n, m;
 bool visited[MAXN+1][MAXN+1];
 int layer[MAXN+1][MAXN+1];
 
-bool bfs(int sj, char drt){
-  printf("--------- bfs(%d,%d,'%c') ------------\n",0,sj,drt);
+bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]);
+bool bfs(int sj, char drt) {
+  return bfs(sj, drt, map); 
+}
+bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]){
+  //printf("--------- bfs(%d,%d,'%c') ------------\n",0,sj,drt);
   for(int i=0;i<n;i++) {
     for(int j=0;j<m;j++) {
       visited[i][j] = false;
@@ -32,12 +37,12 @@ bool bfs(int sj, char drt){
       //continue;
     //}
     visited[u.first][u.second] = true;
-    printf("now %d %d\n",u.first, u.second);
+    //printf("now %d %d\n",u.first, u.second);
     if (map[u.first][u.second]=='$') {
-      printf("found treasure at %d %d!\n",u.first,u.second);
+      //printf("found treasure at %d %d!\n",u.first,u.second);
       return true;
     } else if(map[u.first][u.second]=='@') {
-      printf("end tube at %d %d!\n",u.first,u.second);
+      //printf("end tube at %d %d!\n",u.first,u.second);
       continue;
     }
 
@@ -52,7 +57,7 @@ bool bfs(int sj, char drt){
             if(u.second-1>=0) adj.push_back(make_pair(u.first, u.second-1));
             else {
               drt = '>';
-              printf("change direction to %c at %d %d\n",drt,u.first,u.second);
+              //printf("change direction to %c at %d %d\n",drt,u.first,u.second);
               adj.push_back(make_pair(u.first, u.second+1));
             }
           break;
@@ -60,7 +65,7 @@ bool bfs(int sj, char drt){
             if(u.second+1<m) adj.push_back(make_pair(u.first, u.second+1));
             else {
               drt = '<';
-              printf("change direction to %c at %d %d\n",drt,u.first,u.second);
+              //printf("change direction to %c at %d %d\n",drt,u.first,u.second);
               adj.push_back(make_pair(u.first, u.second-1));
             }
           break;
@@ -68,7 +73,6 @@ bool bfs(int sj, char drt){
     }
 
     int deg = adj.size();
-    int moveTo;
     for(int i=0;i<deg;i++) {
       v = adj[i];
       switch(map[v.first][v.second]) {
@@ -89,19 +93,37 @@ bool bfs(int sj, char drt){
 void read_input() {
   scanf("%d %d",&m,&n);
   for(int i=0;i<n;i++) {
-    scanf("%s",&map[i]);
+    scanf("%s",map[i]);
   }
 }
 
 int main() {
   read_input();
-  int ans=0;
-  //for(int i=0;i<n;i++) {
-    for(int j=0;j<m;j++) {
-      if(bfs(j,'<')) ans++;
-      if(bfs(j,'>')) ans++;
+  int ans=0, maxAns=0;
+  for(int j=0;j<m;j++) {
+    if(bfs(j,'<')) ans++;
+    if(bfs(j,'>')) ans++;
+  }
+  //char newmap[MAXN+1][MAXN+1];
+  //for(int i=0;i<n;i++) strcpy(newmap[i],map[i]);
+  
+  int thisans = 0;
+  if(n==1) maxAns = ans;
+  else
+    for(int i=0;i<n-1;i++) {
+      for(int j=0;j<m;j++) {
+        if(map[i][j]=='.') continue;
+        map[i][j]='.';
+        thisans = 0;
+        for(int k=0;k<m;k++) {
+          if(bfs(k,'<',map)) thisans++;
+          if(bfs(k,'>',map)) thisans++;
+        }
+        //printf("after disable %d %d: %d\n",i,j,thisans);
+        if(thisans>maxAns) maxAns = thisans;
+        map[i][j]='#';
+      }
     }
-  //}
-  printf("%d",ans);
+  printf("%d %d",ans,maxAns);
   return 0;
 }
