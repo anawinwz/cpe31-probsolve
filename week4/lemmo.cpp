@@ -5,6 +5,7 @@
 #include<utility>
 #define MAXN 120
 using namespace std;
+vector< pair<int,int> > flrlist;
 char map[MAXN+1][MAXN+1];
 
 int qua2 = 0, qua1 = 0;
@@ -22,7 +23,7 @@ bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]){
   //printf("--------- bfs(%d,%d,'%c') ------------\n",0,sj,drt);
   for(int i=0;i<n;i++) {
     for(int j=0;j<m;j++) {
-      visited[i][j] = false;
+      //visited[i][j] = false;
       layer[i][j] = -1;
     }
   }
@@ -36,22 +37,25 @@ bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]){
       //printf("already visited %d %d\n",u.first,u.second);
       //continue;
     //}
-    visited[u.first][u.second] = true;
+
     //printf("now %d %d\n",u.first, u.second);
-    if (map[u.first][u.second]=='$') {
+    /*if (map[u.first][u.second]=='$') {
       //printf("found treasure at %d %d!\n",u.first,u.second);
       return true;
     } else if(map[u.first][u.second]=='@') {
       //printf("end tube at %d %d!\n",u.first,u.second);
       continue;
-    }
+    }*/
 
     vector< pair<int,int> > adj;
     switch(map[u.first][u.second]) {
+      case '$': return true;
+      case '@': continue;
       case '.':
         if(u.first+1<=n) adj.push_back(make_pair(u.first+1, u.second));
       break;
       default:
+      if(!visited[u.first][u.second] && u.first<n-1) flrlist.push_back(make_pair(u.first, u.second));
         switch(drt) {
           case '<': 
             if(u.second-1>=0) adj.push_back(make_pair(u.first, u.second-1));
@@ -71,6 +75,8 @@ bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]){
           break;
         }
     }
+    
+    visited[u.first][u.second] = true;
 
     int deg = adj.size();
     for(int i=0;i<deg;i++) {
@@ -109,21 +115,25 @@ int main() {
   
   int thisans = 0;
   if(n==1) maxAns = ans;
-  else
-    for(int i=0;i<n-1;i++) {
-      for(int j=0;j<m;j++) {
-        if(map[i][j]=='.') continue;
-        map[i][j]='.';
-        thisans = 0;
-        for(int k=0;k<m;k++) {
-          if(bfs(k,'<',map)) thisans++;
-          if(bfs(k,'>',map)) thisans++;
-        }
-        //printf("after disable %d %d: %d\n",i,j,thisans);
-        if(thisans>maxAns) maxAns = thisans;
-        map[i][j]='#';
+  else {
+    int flrn = flrlist.size(), i, j;
+    pair<int,int> flr;
+    //printf("flrn: %d\n",flrn);
+    for(int flrnn=0;flrnn<flrn;flrnn++) {
+      flr = flrlist[flrnn];
+      i = flr.first; j = flr.second;
+      //printf("flrnn %d, i j %d %d\n",flrnn,i,j);
+      map[i][j]='.';
+      thisans = 0;
+      for(int k=0;k<m;k++) {
+        if(bfs(k,'<',map)) thisans++;
+        if(bfs(k,'>',map)) thisans++;
       }
+     // printf("after disable %d %d: %d\n",i,j,thisans);
+      if(thisans>maxAns) maxAns = thisans;
+      map[i][j]='#';
     }
+  }
   printf("%d %d",ans,maxAns);
   return 0;
 }
