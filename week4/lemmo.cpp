@@ -13,23 +13,30 @@ int qua2 = 0, qua1 = 0;
 int n, m;
 
 bool visited[MAXN+1][MAXN+1];
+bool realVisited[MAXN+1][MAXN+1];
+//int visitCnt[MAXN+1][MAXN+1];
 int layer[MAXN+1][MAXN+1];
 
-bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]);
+bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]);
 bool bfs(int sj, char drt) {
-  return bfs(sj, drt, map); 
+  return bfs(0, sj, drt, true, map); 
 }
-bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]){
-  //printf("--------- bfs(%d,%d,'%c') ------------\n",0,sj,drt);
-  for(int i=0;i<n;i++) {
-    for(int j=0;j<m;j++) {
-      //visited[i][j] = false;
-      layer[i][j] = -1;
+bool bfs(int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]) {
+  return bfs(0, sj, drt, isCnt, map);
+}
+bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
+  //printf("--------- bfs(%d,%d,'%c') ------------\n",si,sj,drt);
+  if(isCnt) {
+    for(int i=0;i<n;i++) {
+      for(int j=0;j<m;j++) {
+        visited[i][j] = false;
+        layer[i][j] = -1;
+      }
     }
   }
-  layer[0][sj] = 0;
+  layer[si][sj] = 0;
   list< pair<int,int> > Q;
-  Q.push_back(make_pair(0,sj));
+  Q.push_back(make_pair(si,sj));
   while(!Q.empty()) {
     pair<int,int> u = Q.front(), v;
     Q.pop_front();
@@ -46,7 +53,13 @@ bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]){
       //printf("end tube at %d %d!\n",u.first,u.second);
       continue;
     }*/
+    if(isCnt && !realVisited[u.first][u.second] && u.first<n-1 && map[u.first][u.second]=='#') {
+      //printf("not visited %d %d\n",u.first,u.second);
+      flrlist.push_back(make_pair(u.first, u.second));
+    }
 
+    visited[u.first][u.second] = true;
+    realVisited[u.first][u.second] = true;
     vector< pair<int,int> > adj;
     switch(map[u.first][u.second]) {
       case '$': return true;
@@ -55,7 +68,7 @@ bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]){
         if(u.first+1<=n) adj.push_back(make_pair(u.first+1, u.second));
       break;
       default:
-      if(!visited[u.first][u.second] && u.first<n-1) flrlist.push_back(make_pair(u.first, u.second));
+        
         switch(drt) {
           case '<': 
             if(u.second-1>=0) adj.push_back(make_pair(u.first, u.second-1));
@@ -76,7 +89,6 @@ bool bfs(int sj, char drt, char (&map)[MAXN+1][MAXN+1]){
         }
     }
     
-    visited[u.first][u.second] = true;
 
     int deg = adj.size();
     for(int i=0;i<deg;i++) {
@@ -106,6 +118,11 @@ void read_input() {
 int main() {
   read_input();
   int ans=0, maxAns=0;
+  for(int i=0;i<n;i++) {
+    for(int j=0;j<m;j++) {
+      realVisited[i][j]=false;
+    }
+  }
   for(int j=0;j<m;j++) {
     if(bfs(j,'<')) ans++;
     if(bfs(j,'>')) ans++;
@@ -126,9 +143,14 @@ int main() {
       map[i][j]='.';
       thisans = 0;
       for(int k=0;k<m;k++) {
-        if(bfs(k,'<',map)) thisans++;
-        if(bfs(k,'>',map)) thisans++;
+        if(bfs(k,'<',false,map)) thisans++;
+        if(bfs(k,'>',false,map)) thisans++;
       }
+      
+      //printf("try to disable %d %d\told visitCnt: %d\n",i,j,visitCnt[i][j]);
+      /*if(bfs(i,j,'<',false,map) || bfs(i,j,'>',false,map)) {
+        printf("%d %d WORKS!\n",i,j);
+      }*/
      // printf("after disable %d %d: %d\n",i,j,thisans);
       if(thisans>maxAns) maxAns = thisans;
       map[i][j]='#';
