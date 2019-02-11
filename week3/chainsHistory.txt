@@ -1,0 +1,14 @@
+[PPPP][TTPTPPPTTTTP]
+[PPPP][TTPTPPPTTTTP]
+[----][TT-T---TTTT-]
+[xxxP][xxxPxxxPPxPx]
+SUMMATION [PPPP][xxPPPPPPPxPP]
+[PPPP][PTPTPPPTTTTP]
+[xxxP][xxxPxxxPPxPx]
+[xxxP][xxxPxxxPPPPx]
+[-xxP][xxxP-xxPPPP-] node[at]->tail == 0 cause error
+[-xxP][xxxP-xxPPPP-]
+[-xxP][xxxP-xxPPPP-]
+[-xxP][xxxP-xxPPPP-]
+[---P][---P---PPPP-] curr == null
+[PPPP][PPPPPPPPPPPP] new reverse func without stack by POON
