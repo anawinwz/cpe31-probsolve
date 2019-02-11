@@ -65,7 +65,7 @@ bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
       case '$': return true;
       case '@': continue;
       case '.':
-        if(u.first+1<=n) adj.push_back(make_pair(u.first+1, u.second));
+        if(u.first+1<n) adj.push_back(make_pair(u.first+1, u.second));
       break;
       default:
         
@@ -98,7 +98,7 @@ bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
       }
         
       //if(layer[v.first][v.second]==-1) {
-      if(v.first<=n) {
+      if(v.first<n) {
         layer[v.first][v.second]=layer[u.first][u.second]+1;
         Q.push_back(make_pair(v.first, v.second));
       } 
