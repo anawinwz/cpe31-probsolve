@@ -13,6 +13,7 @@ int ans1=0, ans2=0;
 int n, m;
 
 bool visited[MAXN+1][MAXN+1];
+bool isWorked[MAXN+1][MAXN+1];
 int afterClose[MAXN+1][MAXN+1];
 int layer[MAXN+1][MAXN+1];
 
@@ -27,9 +28,11 @@ bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
   //printf("--------- bfs(%d,%d,'%c') ------------\n",si,sj,drt);
   bool ret = false;
   if(isCnt) {
+    //printf("reset!\n");
     for(int i=0;i<n;i++) {
       for(int j=0;j<m;j++) {
         visited[i][j] = false;
+        isWorked[i][j] = false;
         layer[i][j] = -1;
       }
     }
@@ -61,6 +64,10 @@ bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
       //printf("not visited %d %d\n",u.first,u.second);
       flrlist.push_back(make_pair(u.first, u.second));
     }*/
+    if(elm.second.first!=-1 && isWorked[elm.second.first][elm.second.second]==true) {
+      //printf("\t%d %d\n",elm.second.first,elm.second.second);
+      continue;
+    }
 
     visited[u.first][u.second] = true;
     //realVisited[u.first][u.second] = true;
@@ -70,7 +77,9 @@ bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
         if(elm.second.first==-1) {
           ret = true;
         } else {
+          //if(isWorked[elm.second.first][elm.second.second]) continue;
           //printf("Finally after disabled %d %d! Now: %d\n",elm.second.first,elm.second.second,afterClose[elm.second.first][elm.second.second]+1);
+          isWorked[elm.second.first][elm.second.second] = true;
           afterClose[elm.second.first][elm.second.second]++;
           if(afterClose[elm.second.first][elm.second.second]>ans2) ans2 = afterClose[elm.second.first][elm.second.second];
         }
@@ -169,7 +178,10 @@ int main() {
     }
   }*/
   if(n==1) ans2 = ans1;
-  else ans2 = (ans2<=m*2)?ans2:m*2;
+  else {
+    ans2 += ans1;
+    ans2 = (ans2<=m*2)?ans2:m*2;
+  }
   printf("%d %d",ans1,ans2);
   return 0;
 }
