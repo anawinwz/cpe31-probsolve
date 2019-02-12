@@ -3,6 +3,7 @@
 #include<list>
 #include<vector>
 #include<utility>
+//#define debug true
 #define MAXN 120
 using namespace std;
 vector< pair<int,int> > flrlist;
@@ -15,95 +16,127 @@ int n, m;
 bool visited[MAXN+1][MAXN+1];
 bool isWorked[MAXN+1][MAXN+1];
 int afterClose[MAXN+1][MAXN+1];
-int layer[MAXN+1][MAXN+1];
+int result[2][MAXN+1][MAXN+1];
 
-bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]);
-bool bfs(int sj, char drt) {
-  return bfs(0, sj, drt, true, map); 
+bool bfs(int si, int sj, int drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]);
+bool bfs(int sj, int sdrt) {
+  return bfs(0, sj, sdrt, true, map); 
 }
-bool bfs(int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]) {
-  return bfs(0, sj, drt, isCnt, map);
+bool bfs(int sj, int sdrt, bool isCnt, char (&map)[MAXN+1][MAXN+1]) {
+  return bfs(0, sj, sdrt, isCnt, map);
 }
-bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
-  //printf("--------- bfs(%d,%d,'%c') ------------\n",si,sj,drt);
+bool bfs(int si, int sj, int sdrt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
+  //drt: 1-forward 0-backward
+  int drt = sdrt;
+  #ifdef debug
+  printf("--------- bfs(%d,%d,%d) ------------\n",si,sj,drt);
+  #endif
+  if(result[sdrt][si][sj]==1) {
+    #ifdef debug
+      printf("Memorization at First\n");
+    #endif
+    return true;
+  }
   bool ret = false;
   if(isCnt) {
-    //printf("reset!\n");
     for(int i=0;i<n;i++) {
       for(int j=0;j<m;j++) {
         visited[i][j] = false;
         isWorked[i][j] = false;
-        layer[i][j] = -1;
+        //layer[i][j] = -1;
       }
     }
   }
-  layer[si][sj] = 0;
+  
+  //layer[si][sj] = 0;
+  pair<int,int> v;
   list< pair< pair<int,int>, pair<int,int> > > Q;
   Q.push_back(make_pair(make_pair(si,sj),make_pair(-1,-1)));
+  int flrn = flrlist.size();
+  for(int flrnn=0;flrnn<flrn;flrnn++) {
+    v = flrlist[flrnn];
+    if((v.first==si&&((sdrt==1&&v.second<sj)||(sdrt==0&&v.second>sj))) || result[drt][v.first][v.second]==1) continue;
+    Q.push_back(make_pair(make_pair(si,sj),make_pair(v.first,v.second)));
+  }
   while(!Q.empty()) {
     pair< pair<int,int>, pair<int,int> > elm = Q.front();
-    pair<int,int> u = elm.first, v;
+    pair<int,int> u = elm.first;
     Q.pop_front();
-    //if(layer[u.first][u.second]>0) {
-      //printf("already visited %d %d\n",u.first,u.second);
-      //continue;
-    //}
 
-    /*printf("now %d %d\t",u.first,u.second);
-    if(elm.second.first!=-1) printf(" (skipped %d,%d)",elm.second.first, elm.second.second);
-    printf("\n");*/
-    /*if (map[u.first][u.second]=='$') {
-      //printf("found treasure at %d %d!\n",u.first,u.second);
-      return true;
-    } else if(map[u.first][u.second]=='@') {
-      //printf("end tube at %d %d!\n",u.first,u.second);
-      continue;
-    }*/
     /*
     if(isCnt && !realVisited[u.first][u.second] && u.first<n-1 && map[u.first][u.second]=='#') {
       //printf("not visited %d %d\n",u.first,u.second);
       flrlist.push_back(make_pair(u.first, u.second));
     }*/
-    if(elm.second.first!=-1 && isWorked[elm.second.first][elm.second.second]==true) {
-      //printf("\t%d %d\n",elm.second.first,elm.second.second);
-      continue;
+
+    //Check if this turn off works?
+    if(elm.second.first!=-1) {
+      if(isWorked[elm.second.first][elm.second.second]==true) continue;
+      else if(result[drt][u.first][u.second]==1) {
+        #ifdef debug
+        printf("Memorized after disabled %d %d! Now: %d\n",elm.second.first,elm.second.second,afterClose[elm.second.first][elm.second.second]+1);
+        #endif
+        isWorked[elm.second.first][elm.second.second] = true;
+        afterClose[elm.second.first][elm.second.second]++;
+        if(afterClose[elm.second.first][elm.second.second]>ans2) ans2 = afterClose[elm.second.first][elm.second.second];
+        continue;
+      }
+    } else {
+      if(result[drt][u.first][u.second]==1) {
+        #ifdef debug
+        printf("\tUse memorization at %d %d\n",u.first,u.second);
+        #endif
+        ret = true;
+        continue;
+      }
     }
+    #ifdef debug
+    printf("now %d %d\t",u.first,u.second);
+    if(elm.second.first!=-1) printf(" (skipped %d,%d)",elm.second.first, elm.second.second);
+    printf("\n");
+    #endif
 
     visited[u.first][u.second] = true;
-    //realVisited[u.first][u.second] = true;
     vector< pair<int,int> > adj;
     switch(map[u.first][u.second]) {
       case '$': 
         if(elm.second.first==-1) {
           ret = true;
+          result[drt][u.first][u.second] = 1;
         } else {
-          //if(isWorked[elm.second.first][elm.second.second]) continue;
-          //printf("Finally after disabled %d %d! Now: %d\n",elm.second.first,elm.second.second,afterClose[elm.second.first][elm.second.second]+1);
+          #ifdef debug
+          printf("Finally after disabled %d %d! Now: %d\n",elm.second.first,elm.second.second,afterClose[elm.second.first][elm.second.second]+1);
+          #endif
           isWorked[elm.second.first][elm.second.second] = true;
           afterClose[elm.second.first][elm.second.second]++;
           if(afterClose[elm.second.first][elm.second.second]>ans2) ans2 = afterClose[elm.second.first][elm.second.second];
         }
         continue;
-      case '@': continue;
+      case '@':
+        if(result[drt][u.first][u.second]!=1) result[drt][u.first][u.second] = 2;
+        continue;
       case '.':
         if(u.first+1<n) adj.push_back(make_pair(u.first+1, u.second));
       break;
       default:
-        
+        if(u.first==elm.second.first && u.second==elm.second.second) {
+          if(u.first+1<n) adj.push_back(make_pair(u.first+1, u.second));
+        }
+        else
         switch(drt) {
-          case '<': 
+          case 0: //backward
             if(u.second-1>=0) adj.push_back(make_pair(u.first, u.second-1));
             else {
-              drt = '>';
-              //printf("change direction to %c at %d %d\n",drt,u.first,u.second);
+              drt = 1;
+              //printf("Switch direction to %d at %d %d.\n",drt,u.first,u.second);
               adj.push_back(make_pair(u.first, u.second+1));
             }
           break;
-          case '>': 
+          case 1: //forward
             if(u.second+1<m) adj.push_back(make_pair(u.first, u.second+1));
             else {
-              drt = '<';
-              //printf("change direction to %c at %d %d\n",drt,u.first,u.second);
+              drt = 0;
+              //printf("Switch direction to %d at %d %d.\n",drt,u.first,u.second);
               adj.push_back(make_pair(u.first, u.second-1));
             }
           break;
@@ -120,15 +153,18 @@ bool bfs(int si, int sj, char drt, bool isCnt, char (&map)[MAXN+1][MAXN+1]){
         
       //if(layer[v.first][v.second]==-1) {
       if(v.first<n) {
-        layer[v.first][v.second]=layer[u.first][u.second]+1;
+        //layer[v.first][v.second]=layer[u.first][u.second]+1;
         Q.push_back(make_pair(make_pair(v.first, v.second), elm.second));
-        if(elm.second.first==-1 && v.first+1<n && map[v.first][v.second]=='#')
-          Q.push_back(make_pair(make_pair(v.first+1, v.second), make_pair(v.first, v.second)));
+        //if(elm.second.first==-1 && v.first+1<n && result[drt][v.first][v.second]!=1 && map[v.first][v.second]=='#')
+        //  Q.push_back(make_pair(make_pair(v.first+1, v.second), make_pair(v.first, v.second)));
       } 
     }
     
   }
-  if(ret) ans1++;
+  if(ret) {
+    result[sdrt][si][sj] = 1;
+    ans1++;
+  }
   return ret;
 }
 
@@ -141,17 +177,22 @@ void read_input() {
 
 int main() {
   read_input();
-  /*for(int i=0;i<n;i++) {
+  int rewardCnt = 0;
+  for(int i=0;i<n;i++) {
     for(int j=0;j<m;j++) {
-      realVisited[i][j]=false;
+      if(map[i][j]=='#') flrlist.push_back(make_pair(i,j));
+      if(map[n-1][j]=='$') rewardCnt++;
     }
-  }*/
-  for(int j=0;j<m;j++) {
-    bfs(j,'<');
-    bfs(j,'>');
   }
-  //char newmap[MAXN+1][MAXN+1];
-  //for(int i=0;i<n;i++) strcpy(newmap[i],map[i]);
+  if(rewardCnt==0) {
+    printf("0 0");
+    return 0;
+  }
+  for(int j=0;j<m;j++) {
+    bfs(j,0);
+    bfs(j,1);
+  }
+  
   /*
   int thisans = 0;
   if(n==1) maxAns = ans;
@@ -179,8 +220,8 @@ int main() {
   }*/
   if(n==1) ans2 = ans1;
   else {
-    ans2 += ans1;
-    ans2 = (ans2<=m*2)?ans2:m*2;
+    //ans2 += ans1;
+    //ans2 = (ans2<=m*2)?ans2:m*2;
   }
   printf("%d %d",ans1,ans2);
   return 0;
