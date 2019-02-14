@@ -255,8 +255,8 @@ int main() {
     if(ans1+tmp>ans2) ans2 = ans1+tmp;
   }
   
-  if(n==1) ans2 = ans1;
-  else if(ans2>m*2) ans2 = m*2;
+  /*if(n==1) ans2 = ans1;
+  else */if(ans2>m*2) ans2 = m*2;
   printf("%d %d",ans1,ans2); 
   return 0;
 }
