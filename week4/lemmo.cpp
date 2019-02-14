@@ -46,7 +46,7 @@ void reset(bool all) {
     }
   }
 }
-int backtrack(int drt, int ei, int ej,int res);
+Coor backtrack(int drt, int ei, int ej,int res);
 bool bfs(int si, int sj, int drt, char (&map)[MAXN+1][MAXN+1]);
 bool bfs(int sj, int sdrt) {
   return bfs(0, sj, sdrt, map); 
@@ -164,11 +164,11 @@ bool bfs(int si, int sj, int sdrt, char (&map)[MAXN+1][MAXN+1]){
   return false;
 }
 
-int backtrack(int drt, int ei, int ej,int res,bool findAns);
-int backtrack(int drt, int ei, int ej,int res) {
+Coor backtrack(int drt, int ei, int ej,int res,bool findAns);
+Coor backtrack(int drt, int ei, int ej,int res) {
   return backtrack(drt,ei,ej,res,false);
 } 
-int backtrack(int drt, int ei, int ej,int res,bool findAns) {
+Coor backtrack(int drt, int ei, int ej,int res,bool findAns) {
   Coor tmp = parent[drt][ei][ej];
   int ni, nj, ndrt;
   int tick[2][MAXN+1][MAXN+1]={};
@@ -202,14 +202,14 @@ int backtrack(int drt, int ei, int ej,int res,bool findAns) {
         tick[ndrt][ni][nj]=1;
       }
     } else if(findAns) {
-      if(ni+1<n && bfs(ni+1,nj,ndrt)) return cnt[ndrt][ni][nj]; 
+      if(ni+1<n && bfs(ni+1,nj,ndrt)) return make_coor(ndrt,ni,nj); 
     }
     tmp = parent[tmp.drt][ni][nj];
   }
   #ifdef debug
   printf("\n");
   #endif
-  return 0;
+  return make_coor(-1,-1,-1);
 }
 void read_input() {
   scanf("%d %d",&m,&n);
@@ -244,19 +244,44 @@ int main() {
   #ifdef debug
   printf("\n");
   #endif
+
+  ans2 = ans1;
   stopDP = true;
   
+  Coor a,b;
   for(int i=0;i<tunnelN;i++) {
-    tmp = backtrack(0, n-1, tunnelPos[i], -1, true);
-    //printf("[BACK END] result: %d\n",tmp);
-    if(ans1+tmp>ans2) ans2 = ans1+tmp;
-    tmp = backtrack(1, n-1, tunnelPos[i], -1, true);
-    //printf("[BACK END] result: %d\n",tmp);
-    if(ans1+tmp>ans2) ans2 = ans1+tmp;
+    a = backtrack(0, n-1, tunnelPos[i], -1, true);
+    #ifdef debug
+    printf("[BACK END] ");
+    if(a.drt!=-1) {
+      printf("drt: %d, coor: %d %d, cnt: %d",a.drt,a.first,a.second,cnt[a.drt][a.first][a.second]);
+    }
+    printf("\n");
+    #endif
+    b = backtrack(1, n-1, tunnelPos[i], -1, true);
+    #ifdef debug
+    printf("[BACK END] ");
+    if(b.drt!=-1) {
+      printf("drt: %d, coor: %d %d, cnt: %d",b.drt,b.first,b.second,cnt[b.drt][b.first][b.second]);
+    }
+    printf("\n");
+    #endif
+    if(a.drt!=-1 && b.drt!=-1 && a.first==b.first && a.second==b.second) {
+      tmp = cnt[a.drt][a.first][a.second] + cnt[b.drt][b.first][b.second];
+      if(ans1+tmp>ans2) ans2 = ans1+tmp;
+    } else {
+      if(a.drt!=-1) {
+        tmp = cnt[a.drt][a.first][a.second];
+        if(ans1+tmp>ans2) ans2 = ans1+tmp;
+      }
+      if(b.drt!=-1) {
+        tmp = cnt[b.drt][b.first][b.second];
+        if(ans1+tmp>ans2) ans2 = ans1+tmp;
+      }
+    }
   }
   
-  /*if(n==1) ans2 = ans1;
-  else */if(ans2>m*2) ans2 = m*2;
+  if(ans2>m*2) ans2 = m*2;
   printf("%d %d",ans1,ans2); 
   return 0;
 }
