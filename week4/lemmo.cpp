@@ -4,7 +4,7 @@
 #include<list>
 #include<vector>
 #include<utility>
-//#define debug true
+#define debug true
 #define MAXN 120
 using namespace std;
 vector< pair<int,int> > flrlist;
@@ -67,7 +67,7 @@ bool bfs(int si, int sj, int sdrt, char (&map)[MAXN+1][MAXN+1]){
   #endif
   
   //layer[si][sj] = 0;
-  parent[sdrt][si][sj] = make_coor(-1,-1,-1);
+  //parent[sdrt][si][sj] = make_coor(-1,-1,-1);
   Coor v;
   list< Coor > Q;
   Q.push_back(make_coor(sdrt,si,sj));
@@ -143,8 +143,15 @@ bool bfs(int si, int sj, int sdrt, char (&map)[MAXN+1][MAXN+1]){
     int deg = adj.size();
     for(int i=0;i<deg;i++) {
       v = adj[i];
-      switch(map[v.first][v.second]) {
+      /*switch(map[v.first][v.second]) {
         case '.':v.first++;break;
+      }*/
+      if(map[v.first][v.second]=='#') {
+        if(v.second==m-1 && v.drt==1) {
+          v.drt = 0;
+        } else if(v.second==0 && v.drt==0) {
+          v.drt = 1;
+        }
       }
         
       //if(parent[v.drt][v.first][v.second].first==-1 || (parent[v.drt][v.first][v.second].first==u.first&&parent[v.drt][v.first][v.second].second==u.second)) {
@@ -188,7 +195,6 @@ Coor backtrack(int drt, int ei, int ej,int res,bool findAns) {
   #endif
   while(tmp.first!=-1 && tmp.second!=-1) {
     ndrt = tmp.drt;ni = tmp.first; nj = tmp.second;
-    
     #ifdef debug
     printf("- %d %d(%c)",ni,nj,(ndrt)?'>':'<');
     if(ni+1<n && dp[ndrt][ni+1][nj]==2) printf("--candidate");
@@ -203,8 +209,10 @@ Coor backtrack(int drt, int ei, int ej,int res,bool findAns) {
         tick[ndrt][ni][nj]=1;
       }
     } else if(findAns) {
-      if(ni+1<n && bfs(ni+1,nj,ndrt)) return make_coor(ndrt,ni,nj); 
+      if(map[ni][nj]=='#' && ni+1<n && bfs(ni+1,nj,ndrt)) return make_coor(ndrt,ni,nj); 
     }
+    //if(ndrt==0 && nj==m-1) ndrt = 1;
+    //else if(ndrt==1 && nj==0) ndrt= 0;
     tmp = parent[tmp.drt][ni][nj];
   }
   #ifdef debug
@@ -243,7 +251,7 @@ int main() {
   int tunnelN = tunnelPos.size();
 
   #ifdef debug
-  printf("\n--------- Allowing a Destroy ---------\n");
+  printf("\n--------- Allowing a Destroy %d ---------\n",tunnelN);
   #endif
 
   ans2 = ans1;
@@ -251,6 +259,7 @@ int main() {
   
   Coor a,b;
   for(int i=0;i<tunnelN;i++) {
+    printf("+++++ Tunnel Pos: %d ++++\n",tunnelPos[i]);
     a = backtrack(0, n-1, tunnelPos[i], -1, true);
     #ifdef debug
     printf("[BACK END] ");
@@ -270,27 +279,30 @@ int main() {
     if(a.drt!=-1 && b.drt!=-1 && a.first==b.first && a.second==b.second) {
       tmp = cnt[a.drt][a.first][a.second];
       if(b.drt!=a.drt) {
-        tmp += cnt[b.drt][a.first][a.second];
+        //tmp += cnt[b.drt][a.first][a.second];
       } else {
-        if(a.second==0||a.second==m-1) tmp += cnt[(a.drt+1)%2][a.first][a.second];
+        //if(map[a.first][a.second]=='#' && (a.second==0||a.second==m-1)) tmp += cnt[(a.drt+1)%2][a.first][a.second];
       }
-      candidate[a.first][a.second] += tmp;
-      if(ans1+candidate[a.first][a.second]>ans2) ans2 = ans1+candidate[a.first][a.second];
+      //candidate[a.first][a.second] += tmp;
+      //if(ans1+candidate[a.first][a.second]>ans2) ans2 = ans1+candidate[a.first][a.second];
+      if(ans1+tmp>ans2) ans2 = ans1+tmp;
     } else {
       if(a.drt!=-1) {
         tmp = cnt[a.drt][a.first][a.second];
-        if(a.second==0||a.second==m-1) tmp += cnt[(a.drt+1)%2][a.first][a.second];
-        candidate[a.first][a.second] += tmp;
-        if(ans1+candidate[a.first][a.second]>ans2) ans2 = ans1+candidate[a.first][a.second];
+        //if(map[a.first][a.second]=='#' && (a.second==0||a.second==m-1)) tmp += cnt[(a.drt+1)%2][a.first][a.second];
+        //candidate[a.first][a.second] += tmp;
+        //if(ans1+candidate[a.first][a.second]>ans2) ans2 = ans1+candidate[a.first][a.second];
+        if(ans1+tmp>ans2) ans2 = ans1+tmp;
       }
       if(b.drt!=-1) {
         tmp = cnt[b.drt][b.first][b.second];
-        if(b.second==0||b.second==m-1) tmp += cnt[(b.drt+1)%2][b.first][b.second];
-        candidate[b.first][b.second] += tmp;
+        //if(map[b.first][b.second]=='#' && (b.second==0||b.second==m-1)) tmp += cnt[(b.drt+1)%2][b.first][b.second];
+        /*candidate[b.first][b.second] += tmp;
         
         tmp = ans1+candidate[b.first][b.second];
         if(a.drt!=-1) tmp+=candidate[a.first][a.second];
-        if(tmp>ans2) ans2 = tmp;
+        if(tmp>ans2) ans2 = tmp;*/
+        if(ans1+tmp>ans2) ans2 = ans1+tmp;
       }
     }
   }
