@@ -27,6 +27,7 @@ struct Coor{
 Coor parent[2][MAXN+1][MAXN+1];
 int dp[2][MAXN+1][MAXN+1];
 int cnt[2][MAXN+1][MAXN+1];
+int candidate[MAXN+1][MAXN+1];
 
 Coor make_coor(int drt,int first,int second) {
   Coor tmp;
@@ -273,17 +274,23 @@ int main() {
       } else {
         if(a.second==0||a.second==m-1) tmp += cnt[(a.drt+1)%2][a.first][a.second];
       }
-      if(ans1+tmp>ans2) ans2 = ans1+tmp;
+      candidate[a.first][a.second] += tmp;
+      if(ans1+candidate[a.first][a.second]>ans2) ans2 = ans1+candidate[a.first][a.second];
     } else {
       if(a.drt!=-1) {
         tmp = cnt[a.drt][a.first][a.second];
         if(a.second==0||a.second==m-1) tmp += cnt[(a.drt+1)%2][a.first][a.second];
-        if(ans1+tmp>ans2) ans2 = ans1+tmp;
+        candidate[a.first][a.second] += tmp;
+        if(ans1+candidate[a.first][a.second]>ans2) ans2 = ans1+candidate[a.first][a.second];
       }
       if(b.drt!=-1) {
         tmp = cnt[b.drt][b.first][b.second];
         if(b.second==0||b.second==m-1) tmp += cnt[(b.drt+1)%2][b.first][b.second];
-        if(ans1+tmp>ans2) ans2 = ans1+tmp;
+        candidate[b.first][b.second] += tmp;
+        
+        tmp = ans1+candidate[b.first][b.second];
+        if(a.drt!=-1) tmp+=candidate[a.first][a.second];
+        if(tmp>ans2) ans2 = tmp;
       }
     }
   }
