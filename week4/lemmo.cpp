@@ -256,7 +256,7 @@ int main() {
   }
   
   if(n==1) ans2 = ans1;
-  else if(ans2>n*m) ans2 = n*m;
+  else if(ans2>m*2) ans2 = m*2;
   printf("%d %d",ans1,ans2); 
   return 0;
 }
