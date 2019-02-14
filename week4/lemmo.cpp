@@ -242,7 +242,7 @@ int main() {
   int tunnelN = tunnelPos.size();
 
   #ifdef debug
-  printf("\n");
+  printf("\n--------- Allowing a Destroy ---------\n");
   #endif
 
   ans2 = ans1;
@@ -267,15 +267,22 @@ int main() {
     printf("\n");
     #endif
     if(a.drt!=-1 && b.drt!=-1 && a.first==b.first && a.second==b.second) {
-      tmp = cnt[a.drt][a.first][a.second] + cnt[b.drt][b.first][b.second];
+      tmp = cnt[a.drt][a.first][a.second];
+      if(b.drt!=a.drt) {
+        tmp += cnt[b.drt][a.first][a.second];
+      } else {
+        if(a.second==0||a.second==m-1) tmp += cnt[(a.drt+1)%2][a.first][a.second];
+      }
       if(ans1+tmp>ans2) ans2 = ans1+tmp;
     } else {
       if(a.drt!=-1) {
         tmp = cnt[a.drt][a.first][a.second];
+        if(a.second==0||a.second==m-1) tmp += cnt[(a.drt+1)%2][a.first][a.second];
         if(ans1+tmp>ans2) ans2 = ans1+tmp;
       }
       if(b.drt!=-1) {
         tmp = cnt[b.drt][b.first][b.second];
+        if(b.second==0||b.second==m-1) tmp += cnt[(b.drt+1)%2][b.first][b.second];
         if(ans1+tmp>ans2) ans2 = ans1+tmp;
       }
     }
