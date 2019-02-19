@@ -2,33 +2,26 @@
 #include<cmath>
 #include<cstring>
 using namespace std;
-int node[524289];
 int minnow, maxnow;
-int bs(int root) {
+int bs(int root, int ball) {
   if(root*2 > maxnow) {
     //cout << "end at "<<root<<endl;
     return root;
   }
-  if(node[root]==0) {
-    node[root]=1;
-    //cout << root << " go to "<<root*2<<" (left)\n";
-    return bs(root*2);
+  if(ball%2==1) {
+    //cout << root << " go to "<<root*2<<"\n";
+    return bs(root*2,ball/2+1);
   } else {
-    node[root]=0;
     //cout << root << " go to "<<root*2+1<<" (right)\n";
-    return bs(root*2+1);
+    return bs(root*2+1,ball/2);
   }
 }
 int findAns(int d, int ball){
   //cout <<"findAns"<<endl;
-  memset(node,0,524289);
+  int ans = 0;
   minnow = pow(2,d-1);
   maxnow = pow(2,d)-1;
-  int ans = 0;
-  while(ball>0) {
-    ans = bs(1);
-    ball--;
-  } 
+  ans = bs(1,ball);
   return ans;
 }
 int main() {
