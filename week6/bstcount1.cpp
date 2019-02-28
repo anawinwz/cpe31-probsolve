@@ -7,6 +7,7 @@ struct TreeNode {
   TreeNode* left = NULL;
   TreeNode* right = NULL;
   TreeNode* parent = NULL;
+  int size = 1;
   TreeNode(ValType val, TreeNode* left, TreeNode* right)
     : val(val), left(left), right(right) {}
 };
@@ -17,6 +18,7 @@ void insert(TreeNode*& node, int val) {
   } else {
     TreeNode* p = node;
     while(true) {
+      p->size++;
       if(val<p->val) {
         if(p->left!=NULL) p = p->left;
         else {
@@ -67,9 +69,12 @@ int count(TreeNode*& node, int find, int ans) {
   if(node==NULL) return ans;
   else {
     if(find<node->val) ans = count(node->left, find, ans);
-    //cout << "* " << node->val << "\n";
+
+    //cout << "* " << node->val << " size: "<< node->size<<" \n";
     if(node->val > find) ans++;
-    ans = count(node->right, find, ans);
+
+    if(find>node->val) ans = count(node->right, find, ans);
+    else if(node->right!=NULL) ans += node->right->size;
     return ans;
   }
 }
