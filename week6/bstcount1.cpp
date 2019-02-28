@@ -1,25 +1,32 @@
 #include<iostream>
 //#define debug
+#define REALMIN -1000000001
 using namespace std;
 typedef int ValType;
-ValType minn = -1000000001, maxx = 0;
+ValType minn = REALMIN, maxx = 0;
 struct TreeNode {
   ValType val;
   TreeNode* left = NULL;
   TreeNode* right = NULL;
   TreeNode* parent = NULL;
   int size = 1;
+  int min = REALMIN;
+  int max = 0;
   TreeNode(ValType val, TreeNode* left, TreeNode* right)
     : val(val), left(left), right(right) {}
 };
 void insert(TreeNode*& node, int val) {
   TreeNode* newNode = new TreeNode(val, NULL, NULL);
+  newNode->min = newNode->max = val;
   if(node==NULL) {
     node = newNode;
   } else {
     TreeNode* p = node;
     while(true) {
       p->size++;
+      if(p->min==REALMIN||val<p->min) p->min = val;
+      if(val>p->max) p->max = val;
+
       if(val<p->val) {
         if(p->left!=NULL) p = p->left;
         else {
@@ -59,17 +66,17 @@ int search(TreeNode*& node, int val) {
 void travel(TreeNode*& node, int level) {
   if(node==NULL) return;
   else {
-    travel(node->left, level+1);
-    for(int l=0;l<level;l++) cout << "...";
-    cout << "* " << node->val << "\n";
     travel(node->right, level+1);
+    for(int l=0;l<level;l++) cout << "...";
+    cout << "* " << node->val << "(size:"<<node->size<<")\n";
+    travel(node->left, level+1);
   }
 }
 #endif
 int count(TreeNode*& node, int find, int ans) {
   if(node==NULL) return ans;
-  else if(find<minn) return node->size;
-  else if(find>=maxx) return 0;
+  else if(find<node->min) return ans + node->size;
+  else if(find>=node->max) return ans;
   else {
     if(find<node->val) ans = count(node->left, find, ans);
 
@@ -94,14 +101,14 @@ int main() {
   for(int mm=0;mm<m;mm++) {
     cin >> k >> inp;
     #ifdef debug
-    if(k==1) {cout << "\n---"<<k<<" "<<inp<<"----\n";
-    travel(tree,0);
-    cout << "-------\n";}
+    if(k==1) {
+      cout << "\n---"<<k<<" "<<inp<<"----\n"; 
+      travel(tree,0);
+      cout << "----"<<minn<<" "<<maxx<<"----\n";
+    }
     #endif
     switch(k){
       case 1: 
-        if(inp<minn) minn = inp;
-        if(inp>maxx) maxx = inp;
         insert(tree, inp);
         break;
       case 2: cout << findAns(tree, inp) << "\n";break;
