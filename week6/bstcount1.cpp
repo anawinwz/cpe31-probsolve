@@ -66,7 +66,7 @@ void travel(TreeNode*& node, int level) {
 int count(TreeNode*& node, int find, int ans) {
   if(node==NULL) return ans;
   else {
-    ans = count(node->left, find, ans);
+    if(find<node->val) ans = count(node->left, find, ans);
     //cout << "* " << node->val << "\n";
     if(node->val > find) ans++;
     ans = count(node->right, find, ans);
