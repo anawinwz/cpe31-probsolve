@@ -35,22 +35,26 @@ void insert(TreeNode*& node, int val) {
     }
   }
 }
-int search(TreeNode*& node, int val) {
-  if(node==NULL) return false;
+TreeNode* searchNode(TreeNode*& node, int val) {
+  if(node==NULL) return NULL;
   else {
     TreeNode* p = node;
     while(p!=NULL) {
-      if(val==p->val) return 1;
+      if(val==p->val) return p;
       else if(val<p->val) p = p->left;
       else p = p->right;
     }
-    return 0;
+    return NULL;
   }
+}
+int search(TreeNode*& node, int val) {
+  if(searchNode(node,val)!=NULL) return 1;
+  return 0;
 }
 TreeNode* successor(TreeNode*& root, TreeNode*& node) {
   TreeNode* p;
   if(node==NULL) return NULL;
-  else if(node->right!=NULL) {
+  //else if(node->right!=NULL) {
     #ifdef debug
     cout << "right is not null\n";
     #endif
@@ -62,7 +66,7 @@ TreeNode* successor(TreeNode*& root, TreeNode*& node) {
     cout << "return!\n"; 
     #endif
     return p;
-  } else {
+  /*} else {
     #ifdef debug
     cout << "right is null\n";
     #endif
@@ -77,83 +81,36 @@ TreeNode* successor(TreeNode*& root, TreeNode*& node) {
       } else break;
     }
     return succ;
-  }
+  }*/
 }
 void del(TreeNode*& node, int val) {
-  TreeNode* tmp;
-  if(node==NULL) return;
-  else if(node->val==val) {
-    tmp = node;
-    node = NULL; 
-    delete tmp;
-  }
-  else {
-    TreeNode* p = node;
-    TreeNode* tmp2;
-    while(p!=NULL) {
-      if(val<p->val) {
-        if(p->left==NULL) return;
-        else if(p->left->val!=val) p = p->left;
-        else {
-          #ifdef debug
-          cout << "found at left\n";
-          #endif
-          tmp = p->left;
-          if(tmp->left==NULL&&tmp->right==NULL) {
-            p->left = NULL;
-          } else if(tmp->left!=NULL&&tmp->right!=NULL) {
-            #ifdef debug
-            cout << "successor!\n";
-            #endif
-            tmp2 = successor(node, tmp);
-            tmp2->left = tmp->left;
-            tmp2->right = tmp->right;
-            if(tmp2->parent!=NULL) {
-              if(tmp2->parent->left==tmp2) tmp2->parent->left = NULL;
-              else if(tmp2->parent->right==tmp2) tmp2->parent->right = NULL;
-              tmp2->parent = NULL;
-            }
-            p->left = tmp2;
-          } else {
-            p->left = (tmp->left!=NULL) ? tmp->left:tmp->right; 
-          }
-          delete tmp;
-          break;
-        }
-      } else {
-        if(p->right==NULL) return;
-        else if(p->right->val!=val) p = p->right;
-        else {
-          #ifdef debug
-          cout << "found at right\n";
-          #endif
-          tmp = p->right;
-          if(tmp->left==NULL&&tmp->right==NULL) {
-            p->right = NULL;
-          } else if(tmp->left!=NULL&&tmp->right!=NULL) {
-            #ifdef debug
-            cout << "successor!\n";
-            #endif
-            tmp2 = successor(node, tmp);
-            tmp2->left = tmp->left;
-            tmp2->right = tmp->right;
-            if(tmp2->parent!=NULL) {
-              if(tmp2->parent->left==tmp2) tmp2->parent->left = NULL;
-              else if(tmp2->parent->right==tmp2) tmp2->parent->right = NULL;
-              tmp2->parent = NULL;
-            }
-            p->right = tmp2;
-          } else {
-            p->right = (tmp->left!=NULL) ? tmp->left:tmp->right; 
-          }
-          delete tmp;
-          break;
-        }
-      }
+  TreeNode* todel = searchNode(node, val);
+  if(todel==NULL) return;
+  
+  if(todel->left==NULL&&todel->right==NULL) {
+    if(todel->parent==NULL) node = NULL;
+    else {
+      if(todel==todel->parent->left) todel->parent->left = NULL;
+      else todel->parent->right = NULL;
     }
-    return;
+    delete todel;
+  } else if(todel->left==NULL||todel->right==NULL) {
+    TreeNode* child = (todel->left!=NULL) ? todel->left : todel->right;
+    child->parent = todel->parent;
+    if(todel->parent==NULL) node = child; 
+    else {
+      if(todel==todel->parent->left) todel->parent->left = child;
+      else todel->parent->right = child;
+    }
+    delete todel;
+  } else {
+    TreeNode* succ = successor(node, todel);
+    int tmp = succ->val;
+    del(node, tmp);
+    todel->val = tmp;
   }
 }
+
 #ifdef debug
 void travel(TreeNode*& node, int level) {
   if(node==NULL) return;
@@ -172,19 +129,26 @@ int main() {
   cin >> m; 
   for(int mm=0;mm<m;mm++) {
     cin >> k >> inp;
+    #ifdef debug
+    cout << "\n---"<<k<<" "<<inp<<"----\n";
+    //travel(tree,0);
+    //cout << "-------\n";
+    #endif
+    
     switch(k){
       case 1: insert(tree, inp);break;
       case 2: cout << search(tree, inp) << "\n";break;
-      case 3: 
-        #ifdef debug
-        travel(tree,0);
-        #endif
-        del(tree, inp);
-        break;
+      case 3: del(tree, inp); break;
     }
+    #ifdef debug
+    cout << "\n+++++++\n";
+    travel(tree,0);
+    //cout << "+++++++\n";
+    #endif
   }
   #ifdef debug
+  cout << "\n============\n";
   travel(tree,0);
-  #endif
+  #endif 
   return 0;
 }
