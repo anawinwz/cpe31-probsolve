@@ -2,6 +2,7 @@
 //#define debug
 using namespace std;
 typedef int ValType;
+ValType minn = -1000000001, maxx = 0;
 struct TreeNode {
   ValType val;
   TreeNode* left = NULL;
@@ -67,6 +68,8 @@ void travel(TreeNode*& node, int level) {
 #endif
 int count(TreeNode*& node, int find, int ans) {
   if(node==NULL) return ans;
+  else if(find<minn) return node->size;
+  else if(find>=maxx) return 0;
   else {
     if(find<node->val) ans = count(node->left, find, ans);
 
@@ -83,7 +86,7 @@ int findAns(TreeNode*& node, int val) {
 
   return count(node, val, 0);
 }
-TreeNode* tree = NULL; 
+TreeNode* tree = NULL;
 int main() {
   ios::sync_with_stdio(false);
   int m, k, inp;
@@ -96,7 +99,11 @@ int main() {
     cout << "-------\n";}
     #endif
     switch(k){
-      case 1: insert(tree, inp);break;
+      case 1: 
+        if(inp<minn) minn = inp;
+        if(inp>maxx) maxx = inp;
+        insert(tree, inp);
+        break;
       case 2: cout << findAns(tree, inp) << "\n";break;
     }
   }
