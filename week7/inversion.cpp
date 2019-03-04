@@ -19,7 +19,6 @@ int* merge(int a[], int an, int b[], int bn) {
   printf("\tbi: %d\n",bi);
   #endif
   while(bi<bn) {
-    ans++;
     res[resi++]=b[bi++];
   }
   return res;
