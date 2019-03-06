@@ -3,10 +3,12 @@
 #include <iostream>
 #include <cmath>
 #include <cstdio>
-//#define debug
+#define debug
 using namespace std;
 
 int n,k;
+int tick = 0;
+int ans[2][4]={{0,0,0,0},{0,0,0,0}}, ansI=0;
 
 int mindist(int x1, int y1, int x2, int y2) {
   int res = 0;
@@ -14,12 +16,17 @@ int mindist(int x1, int y1, int x2, int y2) {
   res += abs(y2-y1);
   return res;
 }
-
 main()
 {
   traffic_init(&n,&k);
   int tick = 0;
-  int mid, lo, hi, ans[2][4]={{0,0,0,0},{0,0,0,0}}, ansI=0;
+  int mid, lo, hi;
+  if(k==0) {
+    traffic_report(
+      ans[0][0],ans[0][1],ans[0][2],ans[0][3],
+      ans[1][0],ans[1][1],ans[1][2],ans[1][3]
+    );
+  }
   for(int x=1;x<=n;x++) { // by col
     tick++;
     if(traffic_query(x,n,x,1)>n-1) {
@@ -57,6 +64,9 @@ main()
   }
   
   if(ansI==2) {
+    #ifdef debug
+      cout << "ans ready!\n";
+    #endif
     traffic_report(
       ans[0][0],ans[0][1],ans[0][2],ans[0][3],
       ans[1][0],ans[1][1],ans[1][2],ans[1][3]
@@ -99,6 +109,9 @@ main()
     }
   }
   
+  #ifdef debug
+  for(int i=0;i<2;i++) printf("%d, %d, %d, %d\n",ans[i][0],ans[i][1],ans[i][2],ans[i][3]);
+  #endif
   traffic_report(
     ans[0][0],ans[0][1],ans[0][2],ans[0][3],
     ans[1][0],ans[1][1],ans[1][2],ans[1][3]
