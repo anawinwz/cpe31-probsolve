@@ -17,46 +17,66 @@ int mindist(int x1, int y1, int x2, int y2) {
 main()
 {
   traffic_init(&n,&k);
-  int midx, midy, lox, loy, hix, hiy;
-  lox = 1; loy=n; hix=n; hiy=1;
-  while(true) {
-    midx = ceil((lox+hix)/2);
-    midy = ceil((loy+hiy-1)/2);
-    cout << lox<<","<<loy<<"\t<<"<<midx<<","<<midy<<">>\t"<<hix<<","<<hiy<<"\n";
-
-    if(mindist(lox,loy,hix,hiy)==1) {
-      cout << "Found at "<<midx<<","<<midy<<endl;
-      traffic_report(lox,loy,hix,hiy,0,0,0,0);
+  int col = -1;
+  int mid, lo, hi;
+  lo = 0; hi = n-1;
+  for(int x=1;x<=n;x++) { // by col
+    if(traffic_query(x,n,x,1)>n-1) {
+      #ifdef debug
+      cout << "Found col "<<x<<endl;
+      #endif
+      lo = n; hi = 1;
+      while(true) {
+        mid = floor((lo+hi)/2);
+        #ifdef debug
+        cout << lo << " << " << mid << " >> " <<hi<<endl;
+        #endif
+        if(abs(lo-mid)<=1 && abs(mid-hi)<=1) {
+          #ifdef debug
+          cout << lo << " "<<mid<<endl;
+          #endif
+          if(traffic_query(x,lo,x,mid)==2) {
+            traffic_report(x,lo,x,mid,0,0,0,0);
+          } else if(traffic_query(x,mid,x,hi)==2) {
+            traffic_report(x,mid,x,hi,0,0,0,0);
+          }
+        }
+        if(traffic_query(x,lo,x,mid) > abs(lo-mid)) {
+          hi = mid;
+        } else {
+          lo = mid+1;
+        }
+      }
+      break;
     }
-    if(lox>midx || loy<midy) {
-      cout << "Low exceed!\n Mid: "<<midx<<","<<midy<<endl;
-      cout << "Low: "<<lox<<","<<loy<<endl;
-      traffic_report(-1,-1,-1,-1,0,0,0,0);
-    }
-
-    printf("(%d,%d)\t\t\t\t(%d,%d)\n",lox,loy,midx+1,loy);
-    printf("\t\t(%d,%d)\t\t\t(%d,%d)\n",midx,midy+1,hix,midy+1);
-    printf("(%d,%d)\t\t\t\t(%d,%d)\n",lox,midy,midx+1,midy);
-    printf("\t\t(%d,%d)\t\t\t(%d,%d)",midx,hiy,hix,hiy);
-    int dist, dist2;
-    if((dist = traffic_query(lox,loy,midx,midy+1)) > (dist2=mindist(lox,loy,midx,midy+1))) { //Q1
-      cout << "Go to Q1 Dist: "<<dist<<","<<dist2 <<endl;
-      hix = midx;
-      hiy = midy+1;
-    } else if((dist = traffic_query(midx+1,loy,hix,midy+1)) > (dist2=mindist(midx+1,loy,hix,midy+1))) { //Q2
-      cout << "Go to Q2 Dist: "<<dist<<","<<dist2 <<endl;
-      lox = midx+1;
-      hiy = midy+1;
-    } else if((dist = traffic_query(lox,midy,midx,hiy)) > (dist2=mindist(lox,midy,midx,hiy))) { //Q3
-      cout << "Go to Q3 Dist: "<<dist<<","<<dist2 <<endl;
-      hix = midx;
-      //hiy = midy;
-    } else if((dist = traffic_query(midx+1,midy,hix,hiy)) > (dist2=mindist(midx+1,midy,hix,hiy))) {
-      cout << "Go to Q4 Dist: "<<dist<<","<<dist2 <<endl;
-      lox = midx+1;
-      //hiy = midy; 
-    } else {
-      cout << "Impossible! Dist: "<<dist<<","<<dist2 << endl;
+  }
+  for(int y=1;y<=n;y++) { // by row
+    if(traffic_query(1,y,n,y)>n-1) {
+      #ifdef debug
+      cout << "Found row "<<y<<endl;
+      #endif
+      lo = 1; hi = n;
+      while(true) {
+        mid = floor((lo+hi)/2);
+        #ifdef debug
+        cout << lo << " << " << mid << " >> " <<hi<<endl;
+        #endif
+        if(abs(lo-mid)<=1 && abs(mid-hi)<=1) {
+          #ifdef debug
+          cout << lo << " "<<mid<<endl;
+          #endif
+          if(traffic_query(lo,y,mid,y)==2) {
+            traffic_report(lo,y,mid,y,0,0,0,0);
+          } else if(traffic_query(mid,y,hi,y)==2) {
+            traffic_report(mid,y,hi,y,0,0,0,0);
+          }
+        }
+        if(traffic_query(lo,y,mid,y) > abs(lo-mid)) {
+          hi = mid;
+        } else {
+          lo = mid+1;
+        }
+      }
       break;
     }
   }
