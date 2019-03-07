@@ -1,4 +1,4 @@
-#include<iostream>
+#include<cstdio>
 //#define debug
 #define REALMIN -1000000001
 using namespace std;
@@ -67,8 +67,8 @@ void travel(TreeNode*& node, int level) {
   if(node==NULL) return;
   else {
     travel(node->right, level+1);
-    for(int l=0;l<level;l++) cout << "...";
-    cout << "* " << node->val << "(size:"<<node->size<<")\n";
+    for(int l=0;l<level;l++) printf("...");
+    printf("* %d(size:%d)\n",node->val,node->size);
     travel(node->left, level+1);
   }
 }
@@ -80,7 +80,7 @@ int count(TreeNode*& node, int find, int ans) {
   else {
     if(find<node->val) ans = count(node->left, find, ans);
 
-    //cout << "* " << node->val << " size: "<< node->size<<" \n";
+    //printf("* %d size: %d \n",node->val,node->size);
     if(node->val > find) ans++;
 
     if(find>node->val) ans = count(node->right, find, ans);
@@ -95,23 +95,22 @@ int findAns(TreeNode*& node, int val) {
 }
 TreeNode* tree = NULL;
 int main() {
-  ios::sync_with_stdio(false);
   int m, k, inp;
-  cin >> m; 
+  scanf("%d",&m); 
   for(int mm=0;mm<m;mm++) {
-    cin >> k >> inp;
+    scanf("%d %d",&k,&inp);
     #ifdef debug
     if(k==1) {
-      cout << "\n---"<<k<<" "<<inp<<"----\n"; 
+      printf("\n---%d %d----\n",k,inp); 
       travel(tree,0);
-      cout << "----"<<minn<<" "<<maxx<<"----\n";
+      printf("----%d %d----\n",minn,maxx);
     }
     #endif
     switch(k){
       case 1: 
         insert(tree, inp);
         break;
-      case 2: cout << findAns(tree, inp) << "\n";break;
+      case 2: printf("%d\n", findAns(tree, inp));break;
     }
   }
   #ifdef debug
