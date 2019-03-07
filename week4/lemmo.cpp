@@ -4,7 +4,7 @@
 #include<list>
 #include<vector>
 #include<utility>
-#define debug true
+//#define debug true
 #define MAXN 120
 using namespace std;
 vector< pair<int,int> > flrlist;
@@ -257,53 +257,15 @@ int main() {
   ans2 = ans1;
   stopDP = true;
   
-  Coor a,b;
-  for(int i=0;i<tunnelN;i++) {
-    printf("+++++ Tunnel Pos: %d ++++\n",tunnelPos[i]);
-    a = backtrack(0, n-1, tunnelPos[i], -1, true);
-    #ifdef debug
-    printf("[BACK END] ");
-    if(a.drt!=-1) {
-      printf("drt: %d, coor: %d %d, cnt: %d",a.drt,a.first,a.second,cnt[a.drt][a.first][a.second]);
-    }
-    printf("\n");
-    #endif
-    b = backtrack(1, n-1, tunnelPos[i], -1, true);
-    #ifdef debug
-    printf("[BACK END] ");
-    if(b.drt!=-1) {
-      printf("drt: %d, coor: %d %d, cnt: %d",b.drt,b.first,b.second,cnt[b.drt][b.first][b.second]);
-    }
-    printf("\n");
-    #endif
-    if(a.drt!=-1 && b.drt!=-1 && a.first==b.first && a.second==b.second) {
-      tmp = cnt[a.drt][a.first][a.second];
-      if(b.drt!=a.drt) {
-        //tmp += cnt[b.drt][a.first][a.second];
-      } else {
-        //if(map[a.first][a.second]=='#' && (a.second==0||a.second==m-1)) tmp += cnt[(a.drt+1)%2][a.first][a.second];
-      }
-      //candidate[a.first][a.second] += tmp;
-      //if(ans1+candidate[a.first][a.second]>ans2) ans2 = ans1+candidate[a.first][a.second];
+  for(int i=0;i<n-1;i++) {
+    for(int j=0;j<m;j++) {
+      if(map[i][j]!='#') continue;
+      if(dp[0][i][j]==2 && dp[1][i][j]==2) continue;
+      
+      tmp = 0;
+      if(dp[0][i][j]!=2 && ans1+tmp+cnt[0][i][j]>ans2 && bfs(i+1,j,0)) tmp+=cnt[0][i][j];
+      if(dp[1][i][j]!=2 && ans1+tmp+cnt[1][i][j]>ans2 && bfs(i+1,j,1)) tmp+=cnt[1][i][j];
       if(ans1+tmp>ans2) ans2 = ans1+tmp;
-    } else {
-      if(a.drt!=-1) {
-        tmp = cnt[a.drt][a.first][a.second];
-        //if(map[a.first][a.second]=='#' && (a.second==0||a.second==m-1)) tmp += cnt[(a.drt+1)%2][a.first][a.second];
-        //candidate[a.first][a.second] += tmp;
-        //if(ans1+candidate[a.first][a.second]>ans2) ans2 = ans1+candidate[a.first][a.second];
-        if(ans1+tmp>ans2) ans2 = ans1+tmp;
-      }
-      if(b.drt!=-1) {
-        tmp = cnt[b.drt][b.first][b.second];
-        //if(map[b.first][b.second]=='#' && (b.second==0||b.second==m-1)) tmp += cnt[(b.drt+1)%2][b.first][b.second];
-        /*candidate[b.first][b.second] += tmp;
-        
-        tmp = ans1+candidate[b.first][b.second];
-        if(a.drt!=-1) tmp+=candidate[a.first][a.second];
-        if(tmp>ans2) ans2 = tmp;*/
-        if(ans1+tmp>ans2) ans2 = ans1+tmp;
-      }
     }
   }
   
