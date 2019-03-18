@@ -42,7 +42,7 @@ int main() {
         break;
       case 'd':
         if (cursor<editor.size()) {
-          editor.erase(editor.begin()+cursor+1);
+          editor.erase(editor.begin()+cursor);
         }
         break;
     }
