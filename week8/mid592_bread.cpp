@@ -1,6 +1,7 @@
 #include<cstdio>
 #include<cmath>
 #include<algorithm>
+#include<vector>
 using namespace std;
 struct shop {
   int pos;
@@ -8,7 +9,7 @@ struct shop {
   int amt;
 };
 int n, q;
-shop sh[100001];
+vector<shop> sh;
 int home;
 bool sortme(shop a, shop b){
   return a.price<b.price;
@@ -16,17 +17,26 @@ bool sortme(shop a, shop b){
 int main() {
   scanf("%d %d",&n,&q);
   for(int i=0;i<n;i++) {
-    scanf("%d %d %d",&sh[i].pos,&sh[i].price,&sh[i].amt);
+    shop newsh;
+    scanf("%d %d %d",&newsh.pos,&newsh.price,&newsh.amt);
+    sh.push_back(newsh);
   }
-  sort(sh,sh+n,sortme);
+  sort(sh.begin(),sh.end(),sortme);
   int cost;
   for(int qq=0;qq<q;qq++) {
     scanf("%d",&home);
     cost = 0;
-    for(int i=0;i<n;i++) {
-      if(sh[i].amt==0 || abs(sh[i].pos-home)>5) continue;
-      sh[i].amt--;
-      cost = sh[i].price;
+    for(vector<shop>::iterator it=sh.begin();it!=sh.end();) {
+      shop& thisshop = *it;
+      if(thisshop.amt==0 || abs(thisshop.pos-home)>5) {
+        ++it;
+        continue;
+      }
+      //printf("%d buy from %d(): %d\n",home,thisshop.pos,thisshop.price);
+      thisshop.amt--;
+      cost = thisshop.price;
+      if(thisshop.amt<=0) it = sh.erase(it);
+      else ++it;
       break;
     }
     printf("%d\n",cost);
