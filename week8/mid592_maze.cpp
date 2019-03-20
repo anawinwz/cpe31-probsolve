@@ -8,9 +8,9 @@ char map[MAXN+1][MAXN+1];
 int n, q;
 bool bfs(int si, int sj, int ei, int ej) {
   list< pair<pair<int,int>,int > > Q;
-  Q.push_back(make_pair(make_pair(0,0),0)); 
-  pair<pair<int,int>,int > front; pair<int,int> u; int now;
-  vector< pair<int,int> > adj;
+  Q.push_back(make_pair(make_pair(si,sj),0)); 
+  pair<pair<int,int>,int > front; 
+  pair<int,int> u;
   bool visited[MAXN+1][MAXN+1] = {{false}};
   while(!Q.empty()) {
     front = Q.front();
@@ -22,7 +22,7 @@ bool bfs(int si, int sj, int ei, int ej) {
     visited[u.first][u.second] = true;
     if(u.first==ei && u.second==ej) return true;
     
-    adj.clear();
+    vector< pair<int,int> > adj;
     if(u.first+1<n) adj.push_back(make_pair(u.first+1,u.second));
     if(u.first-1>=0) adj.push_back(make_pair(u.first-1,u.second));
     if(u.second+1<n) adj.push_back(make_pair(u.first,u.second+1));
