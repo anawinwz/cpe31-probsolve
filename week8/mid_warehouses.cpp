@@ -7,6 +7,7 @@
 using namespace std;
 vector<int> adj[MAXN+1]; 
 map<pair<int,int>,int> dp;
+map<int, int> direct;
 int n, m, k;
 bool bfs(int start, int end) {
   if(dp.count(make_pair(start,end))>0) {
@@ -58,10 +59,13 @@ int main() {
     scanf("%d %d",&x,&y);
     adj[x].push_back(y);
     adj[y].push_back(x);
+    dp[make_pair(x,y)] = 2;
+    dp[make_pair(y,x)] = 2;
   }
   for(int kk=0;kk<k;kk++){
     scanf("%d %d",&x,&y);
-    if(adj[y].size()>0 && adj[x].size()>0 && bfs(x,y)) printf("1");
+    if(dp.count(make_pair(x,y)) && dp[make_pair(x,y)]>0) printf("%d",dp[make_pair(x,y)]-1);
+    else if(adj[y].size()>0 && adj[x].size()>0 && bfs(x,y)) printf("1");
     else printf("0");
     printf("\n");
   }
