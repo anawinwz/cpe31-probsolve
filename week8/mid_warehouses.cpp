@@ -1,25 +1,36 @@
 #include<cstdio>
 #include<list>
 #include<vector>
+#include<map>
+#include<utility>
 #define MAXN 100000
 using namespace std;
-vector<int> adj[MAXN+1];
+vector<int> adj[MAXN+1]; 
+map<pair<int,int>,int> dp;
 int n, m, k;
 bool bfs(int start, int end) {
+  if(dp.count(make_pair(start,end))>0) {
+    switch(dp[make_pair(start,end)]) {
+      case 1: return false;break; 
+      case 2: return true;break;
+    }
+  }
+
   bool visited[MAXN+1] = {false};
-  int parent[MAXN+1];
+  int parent[MAXN+1] = {0};
   bool isFound = false;
 
   list<int> Q;
   int now;
   Q.push_back(start);
+  parent[start] = 0; 
   while(!Q.empty()) {
     now = Q.front();
     Q.pop_front();
 
     visited[now] = true;
-    if(now==end) {
-      //dp[start][end] = 2;
+    if(now==end || (dp.count(make_pair(now,end))>0 && dp[make_pair(now,end)]==2)) {
+      dp[make_pair(start,end)] = 2;
       isFound = true;
       break;
     }
@@ -31,12 +42,12 @@ bool bfs(int start, int end) {
     }
   }
   if(isFound) {
-    /*while(now!=0) {
-      dp[now][end] = 2;
+    while(now!=0) {
+      dp[make_pair(now,end)] = 2;
       now = parent[now];
-    } */
+    }
   } else {
-    //dp[start][end] = 1;
+    dp[make_pair(start,end)] = 1;
   }
   return isFound;
 }
