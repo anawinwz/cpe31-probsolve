@@ -23,6 +23,11 @@ int main() {
       if(*res==now) {
         res--;
       }
+    } else if(target<dr[0]) {
+      res = dr.begin();
+      if(*res==now) {
+        res++;
+      }
     } else {
       res = --upper_bound(dr.begin(),dr.end(),target);
       if(*res==now) {
