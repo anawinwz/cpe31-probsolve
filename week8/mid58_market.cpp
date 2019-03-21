@@ -1,6 +1,7 @@
 #include<cstdio>
 #include<vector>
 #include<algorithm>
+//#define debug
 using namespace std;
 int n, pn=0;
 typedef struct person {
@@ -26,6 +27,7 @@ int min(int a,int b){
   if(a<b) return a;
   return b;
 }
+bool isLast = false;
 vector<int>::iterator buy_waitsell(int i,vector<int>::iterator it) {
   //==== BUYER come in ====
   //buy price <= P
@@ -42,29 +44,41 @@ vector<int>::iterator buy_waitsell(int i,vector<int>::iterator it) {
     thisaval += p[*it].amt;
   }
 
-  if(thisaval < A) {
+  if(!isLast && thisaval < A) {
+    #ifdef debug
+    printf("\tStock not qualify! %d\n",thisaval);
+    #endif
     waitbuy.push_back(i);
     return waitbuy.end(); 
   } 
   
-  for(vector<int>::iterator it=waitsell.begin();it!=waitsell.end();++it) {
+  for(vector<int>::iterator it=waitsell.begin();it!=waitsell.end();) {
     if(p[*it].price > P) break;
     
+    #ifdef debug
+    printf("\tbought %d g from %d (%d/g.)\n",(p[*it].amt>A)?A:p[*it].amt,(*it)+1,max(P,p[*it].price));
+    #endif
     
     if(p[*it].amt > A) {
-      mval += p[*it].price * A;
+      mval += max(P,p[*it].price) * A;
       p[*it].amt -= A;
       A = 0;
-      waitsell.erase(it);
+      #ifdef debug
+      printf("\t\tremaining stock: %d, remaining req.: %d\n",p[*it].amt,A);
+      #endif
       break; 
     } else {
-      mval += p[*it].price * p[*it].amt;
+      mval += max(P,p[*it].price) * p[*it].amt;
       A -= p[*it].amt;
       p[*it].amt = 0;
+      it = waitsell.erase(it);
     }
+    #ifdef debug
+    printf("\t\tremaining stock: %d, remaining req.: %d\n",p[*it].amt,A);
+    #endif
   }
   
-  sellaval -= A;
+  sellaval -= (p[i].amt-A);
 
   vector<int>::iterator res;
   if( (res=find(waitbuy.begin(),waitbuy.end(),i)) != waitbuy.end() ) {
@@ -73,6 +87,9 @@ vector<int>::iterator buy_waitsell(int i,vector<int>::iterator it) {
 }
 
 vector<int>::iterator sell_waitbuy(int i,vector<int>::iterator it) {
+  #ifdef debug
+  printf("\tSELLER comes in!\n");
+  #endif
   //==== SELLER come in ====
   //sell price >= Q
   //stock B, 
@@ -85,7 +102,10 @@ vector<int>::iterator sell_waitbuy(int i,vector<int>::iterator it) {
     if(p[*it].price < Q) break;
     
     if(p[*it].amt <= B) {
-      mval += max(p[*it].price,Q) * p[*it].amt;
+      #ifdef debug
+      printf("\tsold %d g to %d, price %d/g.\n",p[*it].amt,(*it)+1,Q);
+      #endif
+      mval += Q * p[*it].amt;
       B -= p[*it].amt;
       p[*it].amt = 0;
       it = waitbuy.erase(it);
@@ -98,6 +118,7 @@ vector<int>::iterator sell_waitbuy(int i,vector<int>::iterator it) {
     sellaval += B;
     waitsell.push_back(i);
   }
+  p[i].amt = B;
 
 }
 
@@ -105,6 +126,7 @@ int main() {
   scanf("%d",&n);
   int seller, a, b;
   for(int i=0;i<n;i++) {
+    if(i==n-1) isLast = true;
     scanf("%d %d %d",&seller,&a,&b);
     p[i].seller=--seller;
     p[i].amt=b;
@@ -126,7 +148,9 @@ int main() {
         }
         break;
     }
-    //printf("\t Current mval: %d, Waiting buyer: %d, Waiting seller: %d\n",mval,waitbuy.size(),waitsell.size());
+    #ifdef debug
+    printf("\tCurrent mval: %d, Waiting buyer: %d, Waiting seller: %d\n",mval,waitbuy.size(),waitsell.size());
+    #endif
   }
   printf("%d",mval);
   return 0;
