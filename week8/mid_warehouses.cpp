@@ -5,11 +5,11 @@
 #include<iterator>
 #define MAXN 100000
 using namespace std;
+bool visited[MAXN+1] = {false};
 vector<int> adj[MAXN+1];
 set<int> cango[MAXN+1];
 int n, m, k;
 void bfs(int start) {
-  bool visited[MAXN+1] = {false};
   bool isFound = false;
 
   list<vector<int> > Q;
@@ -21,7 +21,7 @@ void bfs(int start) {
     a = Q.front();
     now = a.back();
     Q.pop_front();
-
+    if(visited[now]) continue;
     visited[now] = true;
     copy(a.begin(),a.end(),inserter(cango[start],cango[start].end()));
     copy(a.begin(),a.end(),inserter(cango[now],cango[now].end()));
