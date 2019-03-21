@@ -29,9 +29,10 @@ int main() {
         res++;
       }
     } else {
-      res = --upper_bound(dr.begin(),dr.end(),target);
+      res = lower_bound(dr.begin(),dr.end(),target);
+      if(*res!=target) --res;
       if(*res==now) {
-        res = --upper_bound(res+1,dr.end(),target);
+        res = --lower_bound(res+1,dr.end(),target);
       }
     }
     ans+=abs(target-(*res));
