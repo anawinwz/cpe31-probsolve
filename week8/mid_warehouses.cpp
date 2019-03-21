@@ -1,72 +1,63 @@
 #include<cstdio>
 #include<list>
 #include<vector>
-#include<map>
-#include<utility>
+#include<set>
+#include<iterator>
 #define MAXN 100000
 using namespace std;
-vector<int> adj[MAXN+1]; 
-map<pair<int,int>,int> dp;
-map<int, int> direct;
+vector<int> adj[MAXN+1];
+set<int> cango[MAXN+1];
 int n, m, k;
-bool bfs(int start, int end) {
-  if(dp.count(make_pair(start,end))>0) {
-    switch(dp[make_pair(start,end)]) {
-      case 1: return false;break; 
-      case 2: return true;break;
-    }
-  }
-
+void bfs(int start) {
   bool visited[MAXN+1] = {false};
-  int parent[MAXN+1] = {0};
   bool isFound = false;
 
-  list<int> Q;
+  list<vector<int> > Q;
   int now;
-  Q.push_back(start);
-  parent[start] = 0; 
+  vector<int> a;
+  a.push_back(start);
+  Q.push_back(a); 
   while(!Q.empty()) {
-    now = Q.front();
+    a = Q.front();
+    now = a.back();
     Q.pop_front();
 
     visited[now] = true;
-    if(now==end || (dp.count(make_pair(now,end))>0 && dp[make_pair(now,end)]==2)) {
-      dp[make_pair(start,end)] = 2;
-      isFound = true;
-      break;
-    }
-
+    copy(a.begin(),a.end(),inserter(cango[start],cango[start].end()));
+    copy(a.begin(),a.end(),inserter(cango[now],cango[now].end()));
     for(int i=0;i<adj[now].size();i++) {
       if(visited[adj[now][i]]) continue;
-      parent[adj[now][i]] = now;
-      Q.push_back(adj[now][i]);
-    }
+      vector<int> newvec = a;
+      newvec.push_back(adj[now][i]);
+      Q.push_back(newvec);
+    } 
   }
-  if(isFound) {
-    while(now!=0) {
-      dp[make_pair(now,end)] = 2;
-      now = parent[now];
-    }
-  } else {
-    dp[make_pair(start,end)] = 1;
-  }
-  return isFound;
+  
+  return;
 }
 int main() {
   scanf("%d %d %d",&n,&m,&k);
-  int x,y;
+  int x,y,minn=0,maxn=0;
   for(int mm=0;mm<m;mm++){
     scanf("%d %d",&x,&y);
+    if(minn==0||x<minn) minn = x;
+    if(y<minn) minn = y;
+
+    if(x>maxn) maxn = x;
+    if(y>maxn) maxn = y; 
+
     adj[x].push_back(y);
     adj[y].push_back(x);
-    dp[make_pair(x,y)] = 2;
-    dp[make_pair(y,x)] = 2;
   }
+  for(int i=minn;i<=maxn;i++){
+    bfs(i);
+  }
+
   for(int kk=0;kk<k;kk++){
     scanf("%d %d",&x,&y);
-    if(dp.count(make_pair(x,y)) && dp[make_pair(x,y)]>0) printf("%d",dp[make_pair(x,y)]-1);
-    else if(adj[y].size()>0 && adj[x].size()>0 && bfs(x,y)) printf("1");
+    if(cango[x].count(y) || cango[y].count(x)) printf("1");
     else printf("0");
     printf("\n");
   }
+
 }
