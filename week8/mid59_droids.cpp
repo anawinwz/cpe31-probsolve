@@ -37,9 +37,10 @@ int main() {
   int target, i, tmp;
   long long int ans = 0;
   for(int mm=0;mm<m;mm++) {
+    tmp = -1;
     scanf("%d",&target);
     i = bsearch(target);
-    if(i+1<n && abs(target-dr[i+1])<abs(target-dr[i])) i++;
+    if(i+1<n && now!=dr[i+1] && abs(target-dr[i+1])<abs(target-dr[i])) i++;
 
     if(now!=dr[i]) {
       ans += abs(target-dr[i]);
@@ -47,7 +48,7 @@ int main() {
       //printf("use %d for %d\n",dr[i],target);
     }else {
       if(i+1<n) tmp = i+1;
-      if(i+1>=n || (i-1>=0 && abs(target-dr[i-1])<abs(target-dr[tmp]) ) ) tmp = i-1;
+      if(i-1>=0 && (tmp==-1 || i+1>=n || abs(target-dr[i-1])<abs(target-dr[tmp])) ) tmp = i-1;
       ans += abs(target-dr[tmp]);
       now = dr[tmp];
       //printf("(Busy)use %d for %d\n",dr[tmp],target);
