@@ -14,10 +14,10 @@ vector<int> waitbuy;
 vector<int> waitsell;
 int mval = 0, sellaval = 0;
 bool sortseller(int a, int b) {
-  return p[a].price < p[b].price;
+  return p[a].price < p[b].price || (p[a].price==p[b].price && a < b);
 }
 bool sortbuyer(int a, int b) {
-  return p[a].price > p[b].price;
+  return p[a].price > p[b].price || (p[a].price==p[b].price && a < b);
 }
 int max(int a,int b){
   if(a>b) return a;
