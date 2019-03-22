@@ -1,61 +1,40 @@
 #include<cstdio>
-#include<list>
-#include<vector>
-#include<set>
-#include<iterator>
 #define MAXN 100000
-using namespace std;
-bool visited[MAXN+1] = {false};
-vector<int> adj[MAXN+1];
-set<int> cango[MAXN+1];
-int n, m, k;
-void bfs(int start) {
-  bool isFound = false;
-
-  list<vector<int> > Q;
-  int now;
-  vector<int> a;
-  a.push_back(start);
-  Q.push_back(a); 
-  while(!Q.empty()) {
-    a = Q.front();
-    now = a.back();
-    Q.pop_front();
-    if(visited[now]) continue;
-    visited[now] = true;
-    copy(a.begin(),a.end(),inserter(cango[start],cango[start].end()));
-    copy(a.begin(),a.end(),inserter(cango[now],cango[now].end()));
-    for(int i=0;i<adj[now].size();i++) {
-      if(visited[adj[now][i]]) continue;
-      vector<int> newvec = a;
-      newvec.push_back(adj[now][i]);
-      Q.push_back(newvec);
-    } 
+int parent[MAXN+1];
+int find(int i) {
+  if(parent[i]==0) {
+    return i;
+  } else {
+    return find(parent[i]); 
   }
-  
-  return;
 }
+int uni(int x,int y) {
+  int a = find(x);
+  int b = find(y);
+  if(a!=b) {
+    parent[b] = a;
+  }
+}
+int min(int x,int y){
+  if(x<y) return x;
+  return y;
+}
+int max(int x,int y){
+  if(x>y) return x;
+  return y;
+}
+int n, m, k;
 int main() {
   scanf("%d %d %d",&n,&m,&k);
-  int x,y,minn=0,maxn=0;
+  int x,y;
   for(int mm=0;mm<m;mm++){
     scanf("%d %d",&x,&y);
-    if(minn==0||x<minn) minn = x;
-    if(y<minn) minn = y;
-
-    if(x>maxn) maxn = x;
-    if(y>maxn) maxn = y; 
-
-    adj[x].push_back(y);
-    adj[y].push_back(x);
-  }
-  for(int i=minn;i<=maxn;i++){
-    bfs(i);
+    uni(min(x,y),max(x,y));
   }
 
   for(int kk=0;kk<k;kk++){
     scanf("%d %d",&x,&y);
-    if(cango[x].count(y) || cango[y].count(x)) printf("1");
+    if(find(x)==find(y)) printf("1");
     else printf("0");
     printf("\n");
   }
