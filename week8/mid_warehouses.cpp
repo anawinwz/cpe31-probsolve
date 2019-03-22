@@ -1,6 +1,6 @@
 #include<cstdio>
 #define MAXN 100000
-int parent[MAXN+1];
+int parent[MAXN+1], rank[MAXN+1];
 int find(int i) {
   if(parent[i]==0) {
     return i;
@@ -8,11 +8,19 @@ int find(int i) {
     return find(parent[i]); 
   }
 }
-int uni(int x,int y) {
+void uni(int x,int y) {
   int a = find(x);
   int b = find(y);
-  if(a!=b) {
+  if(a==b) return;
+
+  //printf("a %d, b %d\n",a,b);
+  if(rank[a]<rank[b]) {
+    parent[a] = b;
+  } else if(rank[a]>rank[b]) {
     parent[b] = a;
+  } else {
+    parent[a] = b;
+    rank[b]++;
   }
 }
 int min(int x,int y){
