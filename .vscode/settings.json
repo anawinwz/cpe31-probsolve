@@ -43,5 +43,7 @@
     "xtr1common": "cpp",
     "xtree": "cpp",
     "xutility": "cpp"
-  }
+  },
+  "python.pythonPath": "C:\\Python\\Python37\\python.exe",
+  "git.ignoreLimitWarning": true
 }
