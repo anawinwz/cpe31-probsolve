@@ -1,1 +1,5 @@
 theme: jekyll-theme-slate
+github:
+  is_project_page: false
+kramdown:
+  html_to_native: true
