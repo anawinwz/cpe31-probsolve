@@ -1,6 +1,6 @@
 #include<cstdio>
 int n, m;
-char map[100][100];
+char map[101][101];
 void rowOp(int i, char cmd, char upd) {
   bool isBlock = (cmd=='A')?false:true;
   int j = (cmd=='R') ? n-1:0;
@@ -14,7 +14,6 @@ void rowOp(int i, char cmd, char upd) {
   }
 }
 void colOp(int j, char cmd, char upd) {
-  //printf("colOp(%d,%c,%c)\n",j,cmd,upd);
   bool isBlock = (cmd=='B')?false:true;
   int i = (cmd=='D') ? n-1:0;
   while(i>=0 && i<n) {
