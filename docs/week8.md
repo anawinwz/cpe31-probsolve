@@ -1,3 +1,4 @@
+## Week 8
 ### Pre-Midterm
 #### Legends  
 _`(opt.)`_: Not required on Grader  
@@ -20,13 +21,13 @@ _mid592_water (opt.)_ | _Direct Approach_
 mid592_bread | 50%: Sorting<br>100%: Index/Map & Sorting
 
 
-### Week 8
+### Weekly problems
 The following problems can all be directly approached. No special algorithms are needed.
 
-Problem | Topics/Data Structure
---- | ---
-syllables | <ul><li>Loop through String</li></ul>
-grass | <ul><li>2D Array</li><li>Conditional Loop</li></ul>
-catmario | <ul><li>Array</li><li>Min Finding</li></ul>
-toinfinity | <ul><li>Math.</li><li>Min-Max Finding</li></ul>
-editor | Vector 
+Problem | Topics/Data Structure | Remark
+--- | --- | ---
+syllables | Loop through String | 
+grass | 2D Array, Loop Control | N = 100 for Case 7,9,10
+catmario | Array, Min Finding |
+toinfinity | Math., Min-Max Finding |
+editor | Vector | Invalid Delete function can make Case 5-10 wrong.
