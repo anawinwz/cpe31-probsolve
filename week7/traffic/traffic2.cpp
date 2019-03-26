@@ -20,12 +20,12 @@ void addAns(int x1, int y1, int x2, int y2) {
   ans[ansI][2] = x2;
   ans[ansI++][3] = y2;
 }
-void findCol(int y, int sx, int ex){
+void findCol(int y, int sx, int ex, int total){
   if(ansI==k) return;
 
-  int lo = sx, hi = ex, mid;
+  int lo = sx, hi = ex, mid, tmp;
   mid = floor(abs(hi+lo)/2);
-  int total = traffic_query(lo,y,hi,y);
+  if(total==-1) total = traffic_query(lo,y,hi,y);
   #ifdef debug
   printf("findCol(%d,%d,%d)\n",y,sx,ex);
   printf("\t%d << %d >> %d\n",lo,mid,hi);
@@ -40,17 +40,17 @@ void findCol(int y, int sx, int ex){
   } else if(total <= abs(lo-hi)) {
     return;
   } else {
-    if(traffic_query(lo,y,mid,y) > abs(lo-mid)) findCol(y, lo, mid);
-    else findCol(y, mid, hi);
+    if((tmp=traffic_query(lo,y,mid,y)) > abs(lo-mid)) findCol(y, lo, mid, tmp);
+    if(total-tmp > abs(mid-hi)) findCol(y, mid, hi, total-tmp);
   }
  //}
 }
-void findRow(int x, int sy, int ey){
+void findRow(int x, int sy, int ey, int total){
   if(ansI==k) return;
 
-  int lo = sy, hi = ey, mid;
+  int lo = sy, hi = ey, mid, tmp;
   mid = floor(abs(hi+lo)/2);
-  int total = traffic_query(x,lo,x,hi);
+  if(total==-1) total = traffic_query(x,lo,x,hi);
   #ifdef debug
   printf("findRow(%d,%d,%d)\n",x,sy,ey);
   printf("\t%d << %d >> %d\n",lo,mid,hi);
@@ -65,8 +65,8 @@ void findRow(int x, int sy, int ey){
   } else if(total <= abs(lo-hi)) {
     return;
   } else {
-    if(traffic_query(x,lo,x,mid) > abs(lo-mid)) findRow(x, lo, mid);
-    else findRow(x, mid, hi);
+    if((tmp = traffic_query(x,lo,x,mid)) > abs(lo-mid)) findRow(x, lo, mid, tmp);
+    if(total-tmp > abs(mid-hi)) findRow(x, mid, hi, total-tmp);
   }
 }
 main()
@@ -74,10 +74,10 @@ main()
   traffic_init(&n,&k);
   int tick = 0;
   for(int y=1;y<=n;y++) { // by row
-    findCol(y, 1, n);
+    findCol(y, 1, n, -1);
   }
   for(int x=1;x<=n;x++) { // by row
-    findRow(x, 1, n);
+    findRow(x, 1, n, -1);
   }
 
   #ifdef debug
