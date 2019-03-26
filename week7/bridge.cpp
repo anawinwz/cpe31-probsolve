@@ -20,7 +20,7 @@ void match(int si, int ei) {
     int mid = floor((si+ei)/2);
     match(si, mid);
     match(mid+1, ei);
-    if(north[mid]==south[mid+1]) ans++;
+    if(north[mid]==south[mid+1] || south[mid]==north[mid+1]) ans++;
   } else {
     for(int i=si;i<=ei;i++) {
       for(int j=si;j<=ei;j++) {
