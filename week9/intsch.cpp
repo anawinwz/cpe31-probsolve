@@ -24,20 +24,11 @@ int main() {
     J.push_back(i);
   }
   sort(J.begin(),J.end(),sortjob);
-  int ans=0, jend;
-  while(!J.empty()){
-    jend = j[J[0]].t;
-    A.push_back(jend);
-    J.erase(J.begin());
-
-    for(vector<int>::iterator it=J.begin();it!=J.end();){
-      if(j[*it].s<jend) {
-        //printf("\tDelete job (%d,%d)\n",j[*it].s,j[*it].t);
-        it = J.erase(it);
-      }
-      else ++it;
-    }
+  int ans=0, lastend=0;
+  for(int i=0;i<J.size();i++) {
+    if(i!=0 && j[J[i]].s<lastend) continue;
     ans++;
+    lastend = j[J[i]].t; 
   }
   printf("%d",ans); 
   return 0;
