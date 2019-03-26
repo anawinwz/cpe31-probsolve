@@ -153,16 +153,17 @@ int main() {
     #endif
   }
   int candidate = 0;
-  while(!waitbuy.empty()||!waitsell.empty()) {
-    if(!waitbuy.empty()) {
-      candidate = waitbuy.front();
-    }
-    if(!waitsell.empty() && (waitbuy.empty() || waitbuy.front()>waitsell.front())) {
+  while(!waitbuy.empty()&&!waitsell.empty()) {
+    candidate = waitbuy.front();
+    
+    if(waitbuy.front()>waitsell.front()) {
       candidate = waitsell.front();
     }
     if(p[candidate].seller) {
+      waitsell.erase(waitsell.begin());
       sell_waitbuy(candidate, waitbuy.end());
     } else {
+      waitbuy.erase(waitbuy.begin());
       buy_waitsell(candidate, waitsell.end());
     }
   }
