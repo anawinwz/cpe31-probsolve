@@ -152,6 +152,20 @@ int main() {
     printf("\tCurrent mval: %d, Waiting buyer: %d, Waiting seller: %d\n",mval,waitbuy.size(),waitsell.size());
     #endif
   }
+  int candidate = 0;
+  while(!waitbuy.empty()||!waitsell.empty()) {
+    if(!waitbuy.empty()) {
+      candidate = waitbuy.front();
+    }
+    if(!waitsell.empty() && (waitbuy.empty() || waitbuy.front()>waitsell.front())) {
+      candidate = waitsell.front();
+    }
+    if(p[candidate].seller) {
+      sell_waitbuy(candidate, waitbuy.end());
+    } else {
+      buy_waitsell(candidate, waitsell.end());
+    }
+  }
   printf("%d",mval);
   return 0;
 }
