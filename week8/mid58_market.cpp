@@ -3,6 +3,10 @@
 using namespace std;
 int n, mval = 0;
 map<int, int> buy, sell;
+int max(int a,int b){
+  if(a>b) return a;
+  return b;
+}
 int main() {
   scanf("%d",&n);
   int type,limit,amt;
@@ -10,8 +14,7 @@ int main() {
     scanf("%d %d %d",&type,&limit,&amt);
     switch(type) {
       case 1: //Buyer
-        while(sell.begin()->first<=limit && amt > 0) {
-          if(sell.begin()==sell.end()) break;
+        while(sell.begin()!=sell.end() && sell.begin()->first<=limit && amt > 0) {
           if(sell.begin()->second > amt) {
             mval += limit * amt;
            // printf("buy %dea price %d\n",amt,limit);
@@ -27,6 +30,7 @@ int main() {
         }
         if(amt > 0) {
           //printf("add buyer %dea limit: %d\n",amt,limit);
+          if(!buy.count(limit)) buy[limit] = 0;
           buy[limit] += amt;
         }
         break;
@@ -50,6 +54,7 @@ int main() {
         }
         if(amt > 0) {
         //  printf("add seller %dea limit: %d\n",amt,limit);
+          if(!sell.count(limit)) sell[limit] = 0;
           sell[limit] += amt;
         }
         break;
