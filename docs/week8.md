@@ -10,7 +10,7 @@ Problem | Main Algorithm(s)
 mid_ladder | _Direct Approach_
 mid_ckkc | Sorting & Math.
 mid_warehouses | 50%: BFS<br>58.33%: Union-Find<br>100%: Union-Find with Rank
-_mid58_market (opt.)_ | **Unknown for now**
+_mid58_market (opt.)_ | STL (Map, Reverse Iterator)<br>_inspired by @koaliesz_
 mid58_levels | _Direct Approach_
 _mid58_alien (opt.)_ | Math.
 _mid59_mask_ | Sorting
