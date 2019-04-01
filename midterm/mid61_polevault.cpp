@@ -1,57 +1,35 @@
+/*
+TASK: mid61_polevault
+LANG: C++
+*/
 #include<cstdio>
-#include<vector>
-#include<algorithm>
-//#define debug
+#include<set>
 using namespace std;
-vector<long long int> sum;
-int n,q;
+int n, q;
+int pole[1001];
+set<int> alen;
+void connect(int i, int now) {
+  if(i>=n) return;
+
+  //pick
+  alen.insert(now+pole[i]);
+  connect(i+1,now+pole[i]); 
+  //notpick
+  alen.insert(now); 
+}
 int main() {
-  long long int inp;
-  sum.push_back(0);
   scanf("%d %d",&n,&q);
   for(int i=0;i<n;i++) {
-    scanf("%lli",&inp);
-    sum.push_back(sum[i]+inp);
+    scanf("%d",&pole[i]);
   }
-  vector<long long int>::iterator it;
-  long long int tmp;
+  for(int i=0;i<n;i++) { 
+    connect(i,0);
+  }
+  int inp;
   for(int i=0;i<q;i++) {
-    scanf("%lli",&inp);
-    it = lower_bound(sum.begin(),sum.end(),inp);
-    if(it!=sum.end()) {
-      if(*it==inp) {
-        printf("Y");
-        continue;
-      } else {
-        tmp = *it;
-        #ifdef debug
-        printf("\t%lli(question) vs %lli(in sum) to find %lli???\n",inp,tmp,abs(inp-tmp));
-        #endif
-        it = find(sum.begin(),sum.end(),abs(inp-tmp));
-        if(it!=sum.end()) {
-          printf("Y");
-          continue;
-        }
-      }
-    } 
-
-    bool isFound = false;
-    int start = 1;
-    for(int i=1;i<=n;i++) {
-      for(int j=0;j<i;j++) {
-        if(sum[i]-sum[j]==inp) {
-          isFound = true;
-          printf("Y");
-          break;
-        }
-      }
-    }
-    if(isFound) continue;
-    printf("N");
-    
-    #ifdef debug
-    printf("\n");
-    #endif
+    scanf("%d",&inp);
+    if(alen.count(inp)!=0) printf("Y");
+    else printf("N");
   }
   return 0;
 }
