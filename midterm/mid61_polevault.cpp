@@ -28,11 +28,24 @@ int main() {
     } else {
       tmp = *it;
       #ifdef debug
-      printf("\t%d(question) vs %d(in sum) to find %d\n",inp,tmp,tmp-inp);
+      printf("\t%lli(question) vs %lli(in sum) to find %lli???\n",inp,tmp,abs(inp-tmp));
       #endif
-      it = find(sum.begin(),sum.end(),tmp-inp);
+      it = find(sum.begin(),sum.end(),abs(inp-tmp));
       if(it!=sum.end()) printf("Y");
-      else printf("N");
+      else {
+        bool isFound = false;
+        for(int i=n;i>=1;i--) {
+          for(int j=1;j<i;j++) {
+            if(sum[i]-sum[j]==inp) {
+              isFound = true;
+              printf("Y");
+              break;
+            }
+          }
+        }
+        if(isFound) continue;
+        printf("N");
+      }
     }
     #ifdef debug
     printf("\n");
