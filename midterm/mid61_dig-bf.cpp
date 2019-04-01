@@ -99,7 +99,7 @@ int main() {
   int tmp, ans = defans;
   for(int i=1;i<r-1;i++) {
     for(int j=1;j<c-1;j++) {
-      if(map[i][j]!='*' || cost[i][j]==0) continue;
+      if(map[i][j]!='*') continue;
       
       tmp = -1;
 
