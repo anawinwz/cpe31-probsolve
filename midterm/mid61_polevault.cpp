@@ -18,35 +18,37 @@ int main() {
   for(int i=0;i<q;i++) {
     scanf("%lli",&inp);
     it = lower_bound(sum.begin(),sum.end(),inp);
-    if(it==sum.end()) {
-      printf("N");
-      continue;
-    }
-    
-    if(*it==inp) {
-      printf("Y");
-    } else {
-      tmp = *it;
-      #ifdef debug
-      printf("\t%lli(question) vs %lli(in sum) to find %lli???\n",inp,tmp,abs(inp-tmp));
-      #endif
-      it = find(sum.begin(),sum.end(),abs(inp-tmp));
-      if(it!=sum.end()) printf("Y");
-      else {
-        bool isFound = false;
-        for(int i=n;i>=1;i--) {
-          for(int j=1;j<i;j++) {
-            if(sum[i]-sum[j]==inp) {
-              isFound = true;
-              printf("Y");
-              break;
-            }
-          }
+    if(it!=sum.end()) {
+      if(*it==inp) {
+        printf("Y");
+        continue;
+      } else {
+        tmp = *it;
+        #ifdef debug
+        printf("\t%lli(question) vs %lli(in sum) to find %lli???\n",inp,tmp,abs(inp-tmp));
+        #endif
+        it = find(sum.begin(),sum.end(),abs(inp-tmp));
+        if(it!=sum.end()) {
+          printf("Y");
+          continue;
         }
-        if(isFound) continue;
-        printf("N");
+      }
+    } 
+
+    bool isFound = false;
+    int start = 1;
+    for(int i=1;i<=n;i++) {
+      for(int j=0;j<i;j++) {
+        if(sum[i]-sum[j]==inp) {
+          isFound = true;
+          printf("Y");
+          break;
+        }
       }
     }
+    if(isFound) continue;
+    printf("N");
+    
     #ifdef debug
     printf("\n");
     #endif
