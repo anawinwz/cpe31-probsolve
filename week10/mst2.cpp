@@ -13,6 +13,9 @@ vector<Edge> e;
 bool sortme(Edge a, Edge b) {
   return a.cost < b.cost;
 }
+int sortme2(const void* p1, const void* p2) {
+  return ((Edge*)p1)->cost - ((Edge*)p2)->cost;
+}
 int n, m;
 int parent[100001], rnk[100001]; 
 int find(int i) {
@@ -45,7 +48,8 @@ int main() {
     scanf("%d %d %d",&v1,&v2,&cost);
     e.push_back(Edge(v1, v2, cost));
   }
-  sort(e.begin(),e.end(),sortme);
+  //sort(e.begin(),e.end(),sortme);
+  qsort(e.data(), e.size(), sizeof(Edge), sortme2);
   vector<Edge>::iterator it;
   long long int totalCost = 0;
   while(ans<n-1) {
