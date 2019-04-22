@@ -53,16 +53,14 @@ int main() {
     e.insert(Edge(v1, v2, cost));
   }
   //sort(e.begin(),e.end(),sortme);
-  set<Edge>::iterator it;
   long long int totalCost = 0;
-  while(ans<n-1) {
-    it = e.begin();
+  for(set<Edge>::iterator it=e.begin();it!=e.end();++it){
     if(uni(it->v1,it->v2)) {
       totalCost += (*it).cost;
       ans++;
       //printf("\tSelect %d %d, %d\n",it->v1,it->v2,it->cost);
+      if(ans==n-1) break;
     }
-    e.erase(it);
   }
   printf("%lli",totalCost);
 }
