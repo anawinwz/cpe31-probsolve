@@ -10,7 +10,6 @@ struct Edge {
     : v1(v1), v2(v2), cost(cost) {}
 };
 vector<Edge> e;
-vector<Edge> ans;
 bool sortme(Edge a, Edge b) {
   return a.cost < b.cost;
 }
@@ -38,6 +37,7 @@ bool uni(int x,int y) {
   }
   return true;
 }
+int ans=0;
 int main() {
   scanf("%d %d",&n,&m);
   int v1,v2,cost;
@@ -48,13 +48,12 @@ int main() {
   sort(e.begin(),e.end(),sortme);
   vector<Edge>::iterator it;
   long long int totalCost = 0;
-  while(ans.size()<n-1) {
+  while(ans<n-1) {
     it = e.begin();
     if(uni(it->v1,it->v2)) {
       totalCost += (*it).cost;
+      ans++;
       //printf("\tSelect %d %d, %d\n",it->v1,it->v2,it->cost);
-      
-      ans.push_back(*it);
     }
     it = e.erase(it);
   }
