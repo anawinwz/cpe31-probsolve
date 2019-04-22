@@ -1,5 +1,5 @@
 #include<cstdio>
-#include<set>
+#include<vector>
 #include<algorithm>
 using namespace std;
 struct Edge {
@@ -9,7 +9,7 @@ struct Edge {
   Edge(int v1, int v2, int cost)
     : v1(v1), v2(v2), cost(cost) {}
 };
-set<Edge> e;
+vector<Edge> e;
 inline bool operator<(const Edge& lhs, const Edge& rhs)
 {
   return lhs.cost < rhs.cost;
@@ -50,13 +50,13 @@ int main() {
   int v1,v2,cost;
   for(int mm=0;mm<m;mm++) {
     scanf("%d %d %d",&v1,&v2,&cost);
-    e.insert(Edge(v1, v2, cost));
+    e.push_back(Edge(v1, v2, cost));
   }
-  //sort(e.begin(),e.end(),sortme);
+  sort(e.begin(),e.end(),sortme);
   long long int totalCost = 0;
-  for(set<Edge>::iterator it=e.begin();it!=e.end();++it){
+  for(vector<Edge>::iterator it=e.begin();it!=e.end();++it){
     if(uni(it->v1,it->v2)) {
-      totalCost += (*it).cost;
+      totalCost += it->cost;
       ans++;
       //printf("\tSelect %d %d, %d\n",it->v1,it->v2,it->cost);
       if(ans==n-1) break;
