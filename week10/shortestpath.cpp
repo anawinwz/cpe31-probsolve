@@ -1,30 +1,36 @@
 #include<cstdio>
 #include<set>
+#include<vector>
 #include<climits>
 #include<utility>
+#include<algorithm>
 #define MAXN 100001
 using namespace std;
 long long int dist[MAXN];
-bool visited[MAXN];
-set<pair<int, int> > adj[MAXN]; 
-int n, m;
-long long int ans=0;
-void go(int now) {
-  //printf("now: %d, dist[now]: %lli\n",now,dist[now]);
-  visited[now] = true;
-  for(set<pair<int,int> >::iterator it=adj[now].begin();it!=adj[now].end();++it) {
-    //printf("\t(%d,%d)\n",it->first,it->second);
-    if(visited[it->second]) continue;
-    if(dist[now]+it->first<dist[it->second]) {
-      dist[it->second] = dist[now]+it->first;
-      //printf("\tcan go to %d with shorter dist (%lli)\n",it->first,dist[it->second]);
+//bool visited[MAXN];
+set<pair<int, int> > adj[MAXN];
+vector<int> vertex; 
+int n, m, visitCnt = 0;
+bool sortme(int a, int b) {
+  return dist[a] < dist[b];
+}
+void dijkstra() {
+  int bestu;
+  while(visitCnt < n) {
+    sort(vertex.begin(),vertex.end(),sortme);
+    bestu = vertex.front();
+    vertex.erase(vertex.begin());
+    visitCnt++;
+    for(set<pair<int, int> >::iterator it=adj[bestu].begin();it!=adj[bestu].end();++it) {
+      if(dist[bestu]+it->first < dist[it->second]) {
+        dist[it->second] = dist[bestu]+it->first;
+      }
     }
-    go(it->second);
   }
 }
 int main() {
   scanf("%d %d",&n,&m);
-  for(int i=0;i<=n;i++) dist[i] = INT_MAX;
+  for(int i=1;i<=n;i++) dist[i] = INT_MAX, vertex.push_back(i);
   int a,b,w;
   dist[1] = 0;
   for(int mm=0;mm<m;mm++) {
@@ -32,7 +38,7 @@ int main() {
     adj[a].insert(make_pair(w,b));
     adj[b].insert(make_pair(w,a));
   }
-  go(1);
+  dijkstra();
   printf("%lli",dist[n]);
   return 0;
 }
