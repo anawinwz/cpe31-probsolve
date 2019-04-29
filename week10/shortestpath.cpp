@@ -19,11 +19,12 @@ long long int dijkstra(int start, int end) {
 
   int bestu;
   for(int i=0;i<n;i++){
+    if(waiting.begin()==waiting.end()) break;
     bestu = waiting.begin()->second;
     waiting.erase(waiting.begin());
     
     for(vector<intpair>::iterator it=adj[bestu].begin();it!=adj[bestu].end();++it) {
-      if(visited[bestu]) continue;
+      if(visited[it->second]) continue;
       if(dist[bestu]+it->first < dist[it->second]) {
         dist[it->second] = dist[bestu]+it->first;
         waiting.insert(make_pair(dist[it->second], it->second));
