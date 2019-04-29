@@ -6,12 +6,17 @@
 #define MAXN 100001
 using namespace std;
 typedef pair<int, int> intpair;
-long long int dist[MAXN];
-bool visited[MAXN];
-set<intpair> waiting;
+
 vector<intpair> adj[MAXN]; 
-int n, m, visitCnt = 0;
-void dijkstra() {
+int n, m;
+long long int dijkstra(int start, int end) {
+  long long int dist[MAXN];
+  bool visited[MAXN] = {false};
+  for(int i=1;i<=n;i++) dist[i] = INT_MAX;
+  dist[start] = 0;
+  set<intpair> waiting;
+  waiting.insert(make_pair(0, start));
+
   int bestu;
   for(int i=0;i<n;i++){
     bestu = waiting.begin()->second;
@@ -26,19 +31,17 @@ void dijkstra() {
     }
     visited[bestu] = true;
   }
+  return dist[end];
 }
 int main() {
   scanf("%d %d",&n,&m);
-  for(int i=1;i<=n;i++) dist[i] = INT_MAX;
+  
   int a,b,w;
-  dist[1] = 0;
   for(int mm=0;mm<m;mm++) {
     scanf("%d %d %d",&a,&b,&w);
     adj[a].push_back(make_pair(w,b));
     adj[b].push_back(make_pair(w,a));
   }
-  waiting.insert(make_pair(0, 1));
-  dijkstra();
-  printf("%lli",dist[n]);
+  printf("%lli", dijkstra(1,n));
   return 0;
 }
