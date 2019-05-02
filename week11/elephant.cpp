@@ -6,8 +6,9 @@ int main() {
   scanf("%d",&n);
   for(int i=1;i<=n;i++) scanf("%d",&p[i]);
   dp[0] = 0;
-  dp[1] = p[1];
-  dp[2] = p[2];
+  dp[1] = 0;
+  dp[2] = 0;
+  dp[3] = p[3];
   long long int bestdp = 0;
   for(int i=3;i<=n;i++) {
     if(dp[i-3] > bestdp) bestdp = dp[i-3];
