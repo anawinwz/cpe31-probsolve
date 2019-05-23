@@ -48,17 +48,17 @@ bool uni(int x,int y) {
   return true;
 }
 /*--- STOP MST RELATED ---*/
-int d[100001]; //Dist per sec
+int d[100002]; //Dist per sec
 int main() {
   scanf("%d",&n);//Chemicals
   scanf("%d",&m);//Edges
-  for(int nn=0;nn<n;nn++) {
+  for(int nn=1;nn<=n;nn++) {
     scanf("%d",&d[nn]);
   }
   int v1,v2,cost;
   for(int mm=0;mm<m;mm++) {
     scanf("%d %d %d",&v1,&v2,&cost);
-    e.push_back(Edge(v1-1, v2-1, ceil((double)cost/(d[v1-1]+d[v2-1]))));
+    e.push_back(Edge(v1, v2, ceil((double)cost/(d[v1]+d[v2]))));
   }
   sort(e.begin(),e.end(),sortme);
   long long int minSec = 0;
