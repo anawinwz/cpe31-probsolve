@@ -58,14 +58,14 @@ int main() {
   int v1,v2,cost;
   for(int mm=0;mm<m;mm++) {
     scanf("%d %d %d",&v1,&v2,&cost);
-    e.push_back(Edge(v1-1, v2-1, cost));
+    e.push_back(Edge(v1-1, v2-1, ceil((double)cost/(d[v1-1]+d[v2-1]))));
   }
   sort(e.begin(),e.end(),sortme);
   long long int minSec = 0;
   int ans=0;
   for(vector<Edge>::iterator it=e.begin();it!=e.end();++it){
     if(uni(it->v1,it->v2)) {
-      if(ceil((double)it->cost/(d[it->v1]+d[it->v2]))>minSec) minSec = ceil((double)it->cost/(d[it->v1]+d[it->v2]));
+      if(it->cost>minSec) minSec = it->cost;
       ans++;
       //printf("\tSelect %d %d, %d\n",it->v1,it->v2,it->cost);
       if(ans==n-1) break;
