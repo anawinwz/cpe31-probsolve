@@ -19,9 +19,18 @@ long long int dijkstra(int start, int end) {
 
   int bestu;
   for(int i=0;i<n;i++){
-    if(waiting.begin()==waiting.end()) break;
-    bestu = waiting.begin()->second;
-    waiting.erase(waiting.begin());
+    for (set<intpair>::iterator it = waiting.begin(); it != waiting.end(); ) {
+      if(visited[it->second]) {
+        waiting.erase(it);
+        it = waiting.begin();
+        continue;
+      }
+      bestu = it->second;
+      waiting.erase(it);
+      it = waiting.begin();
+      break;
+    }
+    visited[bestu] = true;
     
     for(vector<intpair>::iterator it=adj[bestu].begin();it!=adj[bestu].end();++it) {
       if(visited[it->second]) continue;
@@ -30,7 +39,6 @@ long long int dijkstra(int start, int end) {
         waiting.insert(make_pair(dist[it->second], it->second));
       }
     }
-    visited[bestu] = true;
   }
   return dist[end];
 }
