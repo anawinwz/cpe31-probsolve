@@ -47,7 +47,6 @@ bool uni(int x,int y) {
   }
   return true;
 }
-int ans=0;
 int main() {
   while(true) {
     scanf("%d %d",&n,&m);
@@ -56,6 +55,7 @@ int main() {
     reset();
     e.clear();
     int v1,v2,cost;
+    int ans=0;
     long long int totalCost = 0;
     for(int mm=0;mm<m;mm++) {
       scanf("%d %d %d",&v1,&v2,&cost);
@@ -72,6 +72,7 @@ int main() {
         if(ans==n-1) break;
       }
     }
+    if(totalCost < 0) totalCost = 0;
     printf("%lli\n",totalCost);
   }
 }
